@@ -1,10 +1,17 @@
-use std::sync::Arc;
+use std::{net::SocketAddr, sync::Arc};
 
-use actix_web::{
-    get,
-    web::{Data, Query},
-    App, HttpResponse, HttpServer, Responder,
+use axum::{
+    extract::{Query, State},
+    http::StatusCode,
+    response::{IntoResponse, Redirect},
+    routing::get,
+    Json, Router,
 };
+// use actix_web::{
+//     get,
+//     web::{Data, Query},
+//     App, HttpResponse, HttpServer, Responder,
+// };
 use dotenv::dotenv;
 use rspotify::{
     model::{AdditionalType, PlayableItem},
@@ -16,14 +23,12 @@ use rspotify::{
 use serde::Deserialize;
 use serde_json::json;
 
-#[get("/")]
-async fn get_healthcheck() -> impl Responder {
-    HttpResponse::Ok().json(json!({ "ok": true }))
+async fn healthcheck() -> impl IntoResponse {
+    Json(json!({ "ok": true }))
 }
 
-#[get("/current")]
-async fn get_current_song(data: Data<AppData>) -> impl Responder {
-    let spotify = data.spotify.lock().await.unwrap();
+async fn current(State(state): State<AppData>) -> impl IntoResponse {
+    let spotify = state.spotify.lock().await.unwrap();
     let current_playing = spotify
         .current_playing(None, Some(vec![&AdditionalType::Track]))
         .await
@@ -31,7 +36,7 @@ async fn get_current_song(data: Data<AppData>) -> impl Responder {
         .unwrap();
 
     if let Some(PlayableItem::Track(track)) = current_playing.item {
-        return HttpResponse::Ok().json(json!({
+        return Json(json!({
             "ok": true,
             "is_listening": true,
             "track": {
@@ -45,7 +50,7 @@ async fn get_current_song(data: Data<AppData>) -> impl Responder {
         }));
     }
 
-    HttpResponse::Ok().json(json!({ "ok": true }))
+    Json(json!({ "ok": true }))
 }
 
 #[derive(Deserialize)]
@@ -53,25 +58,33 @@ struct GetCallbackQuery {
     code: String,
 }
 
-#[get("/callback")]
-async fn get_callback(query: Query<GetCallbackQuery>, data: Data<AppData>) -> impl Responder {
+async fn callback(
+    Query(query): Query<GetCallbackQuery>,
+    State(state): State<AppData>,
+) -> impl IntoResponse {
     let code = &query.code;
-    let spotify = data.spotify.lock().await.unwrap();
-    let mut should_accept_callback = data.should_accept_callback.lock().await.unwrap();
+    let spotify = state.spotify.lock().await.unwrap();
+    let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
 
     if !*should_accept_callback {
-        return HttpResponse::Unauthorized()
-            .json(json!({ "ok": false, "err": "Tokens may not be set at this time. Please navigate to `/auth` to begin the oauth flow" }));
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(
+                json!({ "ok": false, "err": "Tokens may not be set at this time. Please navigate to `/auth` to begin the oauth flow" }),
+            ),
+        );
     }
 
     *should_accept_callback = false;
 
     if let Err(err) = spotify.request_token(&code).await {
-        return HttpResponse::InternalServerError()
-            .json(json!({ "ok": false, "err": err.to_string() }));
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(json!({ "ok": true, "code": code })),
+        );
     }
 
-    HttpResponse::Ok().json(json!({ "ok": true, "code": code }))
+    (StatusCode::OK, Json(json!({ "ok": true, "code": code })))
 }
 
 #[derive(Deserialize)]
@@ -79,25 +92,24 @@ struct GetSpotifyAuthQuery {
     passkey: String,
 }
 
-#[get("/auth")]
-async fn get_spotify_auth(
-    query: Query<GetSpotifyAuthQuery>,
-    data: Data<AppData>,
-) -> impl Responder {
-    let spotify = data.spotify.lock().await.unwrap();
+async fn auth(
+    Query(query): Query<GetSpotifyAuthQuery>,
+    State(state): State<AppData>,
+) -> impl IntoResponse {
+    let spotify = state.spotify.lock().await.unwrap();
     let url = spotify.get_authorize_url(false).unwrap();
 
     if query.passkey != std::env::var("PASSKEY").expect("fetching env var `PASSKEY`") {
-        return HttpResponse::Unauthorized()
-            .json(json!({ "ok": "false", "err": "missing or invalid invalid passkey" }));
+        return (
+            StatusCode::UNAUTHORIZED,
+            Json(json!({ "ok": false, "err": "missing or invalid invalid passkey" })),
+        ).into_response();
     }
 
-    let mut should_accept_callback = data.should_accept_callback.lock().await.unwrap();
+    let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
 
     *should_accept_callback = true;
-    return HttpResponse::TemporaryRedirect()
-        .append_header(("location", url))
-        .finish();
+    Redirect::temporary(&url).into_response()
 }
 
 #[derive(Clone)]
@@ -106,8 +118,8 @@ struct AppData {
     should_accept_callback: Arc<Mutex<bool>>,
 }
 
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
+#[tokio::main]
+async fn main() {
     dotenv().expect("loading `.env`");
 
     // configure spotify client
@@ -138,15 +150,15 @@ async fn main() -> std::io::Result<()> {
 
     // then configure actix
 
-    HttpServer::new(move || {
-        App::new()
-            .app_data(Data::new(app_data.clone()))
-            .service(get_healthcheck)
-            .service(get_current_song)
-            .service(get_spotify_auth)
-            .service(get_callback)
-    })
-    .bind(("0.0.0.0", 8888))?
-    .run()
-    .await
+    let app = Router::new()
+        .route("/", get(healthcheck))
+        .route("/auth", get(auth))
+        .route("/callback", get(callback))
+        .route("/current", get(current))
+        .with_state(app_data);
+
+    axum::Server::bind(&SocketAddr::from(([0, 0, 0, 0], 8888)))
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
