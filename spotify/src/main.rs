@@ -165,7 +165,7 @@ async fn ws_handler(
             .and_then(|data| serde_json::to_string(&data).ok())
         {
             if let Err(err) = socket
-                .send(Message::Text(serde_json::to_string(&payload).unwrap()))
+                .send(Message::Text(payload))
                 .await
             {
                 println!("!!! Failed to send update to {addr}. Failed with {err}");
