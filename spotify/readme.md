@@ -35,5 +35,5 @@ $ cd "holewinski.dev/spotify"
 $ docker build . -t holewinski-dev/spotify:latest
 
 # and then deploy!
-$ docker run --name spt-cur-track-svc -p "8888:8888" holewinski-dev/spotify:latest
+$ docker run -d --name spt-cur-track-svc -p "8888:8888" holewinski-dev/spotify:latest
 ```

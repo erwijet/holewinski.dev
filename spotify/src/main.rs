@@ -1,27 +1,76 @@
-use std::{net::SocketAddr, sync::Arc};
+use std::{net::SocketAddr, sync::Arc, time::Duration};
+use tokio::time::interval;
 
 use axum::{
-    extract::{Query, State},
+    extract::{
+        ws::{Message, WebSocket},
+        ConnectInfo, Query, State, WebSocketUpgrade,
+    },
     http::StatusCode,
     response::{IntoResponse, Redirect},
     routing::get,
     Json, Router,
 };
-// use actix_web::{
-//     get,
-//     web::{Data, Query},
-//     App, HttpResponse, HttpServer, Responder,
-// };
 use dotenv::dotenv;
 use rspotify::{
-    model::{AdditionalType, PlayableItem},
+    model::{AdditionalType, CurrentlyPlayingContext, Image, PlayableItem, SimplifiedArtist},
     prelude::OAuthClient,
     scopes,
     sync::Mutex,
     AuthCodeSpotify, Config, Credentials, OAuth,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
+
+#[derive(Serialize)]
+struct SpotifyListeningInfo {
+    title: String,
+    artists: Vec<SimplifiedArtist>,
+    images: Vec<Image>,
+    track_id: String,
+    duration: i64,
+    progress: i64,
+}
+
+impl TryFrom<CurrentlyPlayingContext> for SpotifyListeningInfo {
+    type Error = ();
+    fn try_from(value: CurrentlyPlayingContext) -> Result<Self, Self::Error> {
+        if let Some(PlayableItem::Track(track)) = value.item {
+            Ok(SpotifyListeningInfo {
+                title: track.name,
+                artists: track.artists,
+                images: track.album.images,
+                track_id: track.id.map(|id| id.to_string()).unwrap_or("".into()),
+                duration: track.duration.num_seconds(),
+                progress: value.progress.map_or(0, |progress| progress.num_seconds()),
+            })
+        } else {
+            Err(())
+        }
+    }
+}
+
+trait Flatten<T> {
+    fn flatten(self) -> Option<T>;
+}
+
+impl<T> Flatten<T> for Option<Option<T>> {
+    fn flatten(self) -> Option<T> {
+        match self {
+            Some(v) => v,
+            None => None,
+        }
+    }
+}
+
+async fn get_listening_data(spotify: &AuthCodeSpotify) -> Option<SpotifyListeningInfo> {
+    let current_playing = spotify
+        .current_playing(None, Some(vec![&AdditionalType::Track]))
+        .await
+        .unwrap()?;
+
+    current_playing.try_into().ok()
+}
 
 async fn healthcheck() -> impl IntoResponse {
     Json(json!({ "ok": true }))
@@ -29,28 +78,9 @@ async fn healthcheck() -> impl IntoResponse {
 
 async fn current(State(state): State<AppData>) -> impl IntoResponse {
     let spotify = state.spotify.lock().await.unwrap();
-    let current_playing = spotify
-        .current_playing(None, Some(vec![&AdditionalType::Track]))
-        .await
-        .unwrap()
-        .unwrap();
+    let data = get_listening_data(&spotify).await;
 
-    if let Some(PlayableItem::Track(track)) = current_playing.item {
-        return Json(json!({
-            "ok": true,
-            "is_listening": true,
-            "track": {
-                "title": track.name,
-                "artists": track.artists,
-                "images": track.album.images,
-                "track_id": track.id,
-                "duration": track.duration.num_seconds()
-            },
-            "progress": current_playing.progress.map(|progress| progress.num_seconds())
-        }));
-    }
-
-    Json(json!({ "ok": true }))
+    Json(json!({ "ok": true, "has_data": data.is_some(), "data": data }))
 }
 
 #[derive(Deserialize)]
@@ -80,7 +110,7 @@ async fn callback(
     if let Err(err) = spotify.request_token(&code).await {
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "ok": true, "code": code })),
+            Json(json!({ "ok": true, "err": err.to_string() })),
         );
     }
 
@@ -103,7 +133,8 @@ async fn auth(
         return (
             StatusCode::UNAUTHORIZED,
             Json(json!({ "ok": false, "err": "missing or invalid invalid passkey" })),
-        ).into_response();
+        )
+            .into_response();
     }
 
     let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
@@ -112,10 +143,45 @@ async fn auth(
     Redirect::temporary(&url).into_response()
 }
 
+async fn ws_handler(
+    ws: WebSocketUpgrade,
+    State(state): State<AppData>,
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
+) -> impl IntoResponse {
+    println!("Incoming connect from {addr}...");
+
+    ws.on_upgrade(move |mut socket| async move {
+        let mut clients = state.ws_clients.lock().await.unwrap();
+
+        let spotify = state.spotify.lock().await.unwrap();
+
+        if socket.send(Message::Ping(vec![5, 8, 7, 8])).await.is_err() {
+            println!("!!! Failed to send ping to {addr}");
+            return;
+        }
+
+        if let Some(payload) = get_listening_data(&spotify)
+            .await
+            .and_then(|data| serde_json::to_string(&data).ok())
+        {
+            if let Err(err) = socket
+                .send(Message::Text(serde_json::to_string(&payload).unwrap()))
+                .await
+            {
+                println!("!!! Failed to send update to {addr}. Failed with {err}");
+                return;
+            }
+        }
+
+        clients.push(socket);
+    })
+}
+
 #[derive(Clone)]
 struct AppData {
     spotify: Arc<Mutex<AuthCodeSpotify>>,
     should_accept_callback: Arc<Mutex<bool>>,
+    ws_clients: Arc<Mutex<Vec<WebSocket>>>,
 }
 
 #[tokio::main]
@@ -146,7 +212,42 @@ async fn main() {
     let app_data = AppData {
         spotify: Arc::new(Mutex::new(spotify)),
         should_accept_callback: Arc::new(Mutex::new(false)),
+        ws_clients: Arc::new(Mutex::new(vec![])),
     };
+
+    let spotify_tx = app_data.spotify.clone();
+    let ws_clients_tx = app_data.ws_clients.clone();
+
+    tokio::spawn(async move {
+        let mut interval = interval(Duration::from_secs(5));
+        interval.tick().await;
+
+        loop {
+            interval.tick().await;
+
+            let mut clients = ws_clients_tx.lock().await.unwrap();
+            let spotify = spotify_tx.lock().await.unwrap();
+
+            if clients.is_empty() {
+                continue;
+            }
+
+            if let Some(msg) = get_listening_data(&spotify)
+                .await
+                .map(|data| serde_json::to_string(&data))
+                .transpose()
+                .ok()
+                .flatten()
+                .map(|str| Message::Text(str))
+            {
+                for client in clients.iter_mut() {
+                    if let Err(err) = client.send(msg.clone()).await {
+                        println!("!!! Failed to send message to client. Failed with error: {err}");
+                    }
+                }
+            }
+        }
+    });
 
     // then configure actix
 
@@ -155,10 +256,11 @@ async fn main() {
         .route("/auth", get(auth))
         .route("/callback", get(callback))
         .route("/current", get(current))
+        .route("/ws", get(ws_handler))
         .with_state(app_data);
 
     axum::Server::bind(&SocketAddr::from(([0, 0, 0, 0], 8888)))
-        .serve(app.into_make_service())
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();
 }
