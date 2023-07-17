@@ -229,6 +229,7 @@ async fn main() {
             let spotify = spotify_tx.lock().await.unwrap();
 
             if clients.is_empty() {
+                println!("No clients... skipping for this tick. Clients: '{clients:?}'");
                 continue;
             }
 

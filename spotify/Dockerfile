@@ -1,21 +1,34 @@
-FROM rust:bullseye as deps-builder
+# syntax=docker/dockerfile:1.3-labs
+# ^ enable heredocs & buildkit: https://www.docker.com/blog/introduction-to-heredocs-in-dockerfiles/
+# note: this requires either DOCKER_BUILDKIT=1 be set if not building with `$ docker buildx`
 
-RUN cd /tmp && cargo new app
-COPY Cargo.* /tmp/app
+FROM rust:1.70 AS build
 
-WORKDIR /tmp/app
+RUN cargo new /spotify
+COPY ./Cargo.toml ./Cargo.lock /spotify/
 
-RUN cargo install cargo-build-deps
-RUN cargo build-deps --release
+WORKDIR /spotify
+RUN --mount=type=cache,target=/usr/local/cargo/registry cargo build --release
+
+COPY ./ /spotify
+
+RUN --mount=type=cache,target=/usr/local/cargo/registry <<EOF
+  set -e
+  # update timestamps to force a new build (this time with the actual sources)
+  touch /spotify/src/main.rs
+  cargo build --release
+EOF
 
 ##
 
-FROM rust:bullseye
-WORKDIR /app
+FROM debian:bullseye-slim AS app
+COPY --from=build /spotify/target/release/spotify /spotify
+COPY .env /.env
 
-COPY --from=deps-builder /tmp/app/target/ /app/target
+RUN <<EOF
+  apt-get update
+  apt-get install -y ca-certificates
+  update-ca-certificates
+EOF
 
-COPY ./ /app
-RUN cargo build --release
-
-CMD ["./target/release/spotify"]
+CMD ["/spotify"]
