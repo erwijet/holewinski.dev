@@ -151,8 +151,6 @@ async fn ws_handler(
     println!("Incoming connect from {addr}...");
 
     ws.on_upgrade(move |mut socket| async move {
-        let mut clients = state.ws_clients.lock().await.unwrap();
-
         let spotify = state.spotify.lock().await.unwrap();
 
         if socket.send(Message::Ping(vec![5, 8, 7, 8])).await.is_err() {
@@ -164,16 +162,13 @@ async fn ws_handler(
             .await
             .and_then(|data| serde_json::to_string(&data).ok())
         {
-            if let Err(err) = socket
-                .send(Message::Text(payload))
-                .await
-            {
+            if let Err(err) = socket.send(Message::Text(payload)).await {
                 println!("!!! Failed to send update to {addr}. Failed with {err}");
                 return;
             }
         }
 
-        clients.push(socket);
+        state.ws_clients.lock().await.unwrap().push(socket);
     })
 }
 
@@ -241,16 +236,20 @@ async fn main() {
                 .flatten()
                 .map(|str| Message::Text(str))
             {
-                for client in clients.iter_mut() {
-                    if let Err(err) = client.send(msg.clone()).await {
+                let len = clients.len();
+                for index in len..=0 {
+                    if let Err(err) = clients[index].send(msg.clone()).await {
                         println!("!!! Failed to send message to client. Failed with error: {err}");
+                        clients
+                            .remove(index)
+                            .close()
+                            .await
+                            .expect(&format!("closing failed client @{index}"));
                     }
                 }
             }
         }
     });
-
-    // then configure actix
 
     let app = Router::new()
         .route("/", get(healthcheck))
