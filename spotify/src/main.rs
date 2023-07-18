@@ -151,17 +151,12 @@ async fn ws_handler(
     println!("Incoming connect from {addr}...");
 
     ws.on_upgrade(move |mut socket| async move {
-        let spotify = state.spotify.lock().await.unwrap();
-
         if socket.send(Message::Ping(vec![5, 8, 7, 8])).await.is_err() {
             println!("!!! Failed to send ping to {addr}");
             return;
         }
 
-        if let Some(payload) = get_listening_data(&spotify)
-            .await
-            .and_then(|data| serde_json::to_string(&data).ok())
-        {
+        if let Ok(payload) = serde_json::to_string(&json!({ "type": "ack", "ok": true })) {
             if let Err(err) = socket.send(Message::Text(payload)).await {
                 println!("!!! Failed to send update to {addr}. Failed with {err}");
                 return;
@@ -212,15 +207,17 @@ async fn main() {
 
     let spotify_tx = app_data.spotify.clone();
     let ws_clients_tx = app_data.ws_clients.clone();
+    let prev_track_progress_tx = Arc::new(Mutex::<i64>::new(0));
 
     tokio::spawn(async move {
-        let mut interval = interval(Duration::from_secs(5));
+        let mut interval = interval(Duration::from_secs(3));
         interval.tick().await;
 
         loop {
             interval.tick().await;
 
             let mut clients = ws_clients_tx.lock().await.unwrap();
+            let mut previous_track_progress = prev_track_progress_tx.lock().await.unwrap();
             let spotify = spotify_tx.lock().await.unwrap();
 
             if clients.is_empty() {
@@ -230,14 +227,22 @@ async fn main() {
 
             if let Some(msg) = get_listening_data(&spotify)
                 .await
-                .map(|data| serde_json::to_string(&data))
-                .transpose()
+                .map_or_else(
+                    || serde_json::to_string(&json!({ "type": "update", "ok": true, "playing": false })),
+                    |data| {
+                        let paused = data.progress == *previous_track_progress;
+                        *previous_track_progress = data.progress;
+
+                        serde_json::to_string(
+                            &json!({ "type": "update", "ok": true, "playing": true, "paused": paused, "data": data }),
+                        )
+                    },
+                )
                 .ok()
-                .flatten()
                 .map(|str| Message::Text(str))
             {
                 let len = clients.len();
-                for index in len..=0 {
+                for index in (0..len).rev() {
                     if let Err(err) = clients[index].send(msg.clone()).await {
                         println!("!!! Failed to send message to client. Failed with error: {err}");
                         clients
