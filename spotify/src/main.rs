@@ -249,7 +249,7 @@ async fn main() {
                             .remove(index)
                             .close()
                             .await
-                            .expect(&format!("closing failed client @{index}"));
+                            .ok(); // allow failure-- it's possible the ws has a broken pipe
                     }
                 }
             }
