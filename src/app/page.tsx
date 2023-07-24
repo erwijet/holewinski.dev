@@ -7,8 +7,6 @@ import {
   Heading,
   Text,
   chakra,
-  Spacer,
-  Flex,
   Stack,
   Divider,
 } from "@chakra-ui/react";
