@@ -2,23 +2,25 @@
 
 import {
   Container,
-  HStack,
-  VStack,
-  Heading,
-  Text,
-  chakra,
-  Stack,
   Divider,
+  HStack,
+  Heading,
+  Link,
+  Stack,
+  Text,
+  VStack,
+  chakra,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { Navbar } from "src/common/Navbar";
 import TylerHead from "../assets/tyler-head.png";
 import Buttons from "./buttons";
 
+import { SpotifyCard } from "src/common/SpotifyCard";
+
 const ProfileImage = chakra(Image, {
   shouldForwardProp: (prop) => ["width", "height", "src", "alt"].includes(prop),
 });
-
 const App = () => {
   return (
     <>
@@ -43,17 +45,18 @@ const App = () => {
             Hey there!
           </Heading>
           <Text>
-            My name is Tyler. I'm a fullstack web developer in Rochester, NY.
-            I'm working full-time, while also persuing my B.S. at the Rochester
-            Institute of Technology. I'd love to tell you a little about myself.
+            My name is Tyler. I'm a Rochester-based fullstack web developer in
+            New York. I'm working full-time, while also persuing my B.S. at{" "}
+            <Link href="https://rit.edu">RIT</Link>. I'd love to tell you a
+            little about myself.
           </Text>
         </Stack>
         <Divider my={"8"} />
         <Stack gap={"8px"}>
-          <Heading size={"lg"} my="8px">
-            On the Web
-          </Heading>
-          <Buttons />
+          <HStack justifyContent={"space-between"}>
+            <SpotifyCard />
+            <Buttons />
+          </HStack>
         </Stack>
         <Divider my={"8"} />
       </Container>

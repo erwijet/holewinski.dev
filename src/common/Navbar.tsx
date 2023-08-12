@@ -71,7 +71,7 @@ export const Navbar = (props: NavbarProps) => {
           flexGrow={1}
           mt={{ base: 4, md: 0 }}
         >
-          <LinkItem href="/resume">resume</LinkItem>
+          <LinkItem href="https://resume.holewinski.dev">resume</LinkItem>
           <LinkItem href="https://github.com/erwijet/holewinski.dev">source</LinkItem>
           <LinkItem href="https://linkedin.com/in/tylerholewinski ">linkedin</LinkItem>
         </Stack>
