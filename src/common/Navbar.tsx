@@ -1,5 +1,6 @@
-'use client';
+"use client";
 
+import { mapKeys } from "@bryx-inc/ts-utils";
 import {
   Box,
   Container,
@@ -9,14 +10,25 @@ import {
   useColorModeValue,
   LinkProps,
   Stack,
+  Menu,
+  MenuButton,
+  IconButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { DetailedHTMLProps, HTMLAttributes } from "react";
+import {
+  DetailedHTMLProps,
+  HTMLAttributes,
+  MutableRefObject,
+  forwardRef,
+} from "react";
+import { FaBars } from "react-icons/fa";
 
 type LinkItemProps = {
   path: string;
 } & LinkProps;
 
-const LinkItem = ({ children, ...rest }: Omit<LinkItemProps, 'path'>) => {
+const LinkItem = ({ children, ...rest }: Omit<LinkItemProps, "path">) => {
   return (
     <Link
       p={2}
@@ -27,6 +39,16 @@ const LinkItem = ({ children, ...rest }: Omit<LinkItemProps, 'path'>) => {
     </Link>
   );
 };
+
+const MenuLinkItem = forwardRef<MutableRefObject<HTMLAnchorElement>, LinkProps>(
+  (props, ref) => <Link ref={ref} {...props} />
+);
+
+const LINKS = {
+  Resume: "https://resume.holewisnki.dev",
+  Source: "https://github.com/erwijet/holewinski.dev",
+  Linkedin: "https://linkedin.com/in/tylerholewinski",
+} as const;
 
 export type NavbarProps = DetailedHTMLProps<
   HTMLAttributes<HTMLElement>,
@@ -71,10 +93,30 @@ export const Navbar = (props: NavbarProps) => {
           flexGrow={1}
           mt={{ base: 4, md: 0 }}
         >
-          <LinkItem href="https://resume.holewinski.dev">resume</LinkItem>
-          <LinkItem href="https://github.com/erwijet/holewinski.dev">source</LinkItem>
-          <LinkItem href="https://linkedin.com/in/tylerholewinski ">linkedin</LinkItem>
+          {mapKeys(LINKS, (key) => (
+            <LinkItem key={key} href={LINKS[key]}>
+              {key}
+            </LinkItem>
+          ))}
         </Stack>
+
+        <Box ml={2} display={{ base: "inline-block", md: "none" }}>
+          <Menu isLazy id="navbar-menu">
+            <MenuButton
+              as={IconButton}
+              icon={<FaBars />}
+              variant="outline"
+              aria-label="Options"
+            />
+            <MenuList>
+              {mapKeys(LINKS, (key) => (
+                <MenuItem key={key} as={MenuLinkItem} href={LINKS[key]}>
+                  {key}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </Box>
       </Container>
     </Box>
   );

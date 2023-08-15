@@ -13,8 +13,8 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { Navbar } from "src/common/Navbar";
+import { Socials } from "src/app/socials";
 import TylerHead from "../assets/tyler-head.png";
-import Buttons from "./buttons";
 
 import { SpotifyCard } from "src/common/SpotifyCard";
 
@@ -55,7 +55,7 @@ const App = () => {
         <Stack gap={"8px"}>
           <HStack justifyContent={"space-between"}>
             <SpotifyCard />
-            <Buttons />
+            <Socials />
           </HStack>
         </Stack>
         <Divider my={"8"} />

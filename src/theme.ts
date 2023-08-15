@@ -9,7 +9,7 @@ const styles = {
       bg: mode("#f0e7db", "#202023")(props),
     },
   }),
-} satisfies ChakraTheme['styles'];
+} satisfies ChakraTheme["styles"];
 
 const components = {
   Heading: {
@@ -35,23 +35,29 @@ const components = {
 
 const fonts = {
   heading: "'M PLUS Rounded 1c'",
-  body: "'Raleway'"
-};
+  body: "'Raleway'",
+} satisfies ChakraTheme["fonts"];
 
-const colors = {
-} satisfies ChakraTheme['colors'];
+const colors = {} satisfies ChakraTheme["colors"];
 
 const semanticTokens = {
   accent: {
-    default: '#8C5E58',
-    _dark: '#8C5E58'
-  }
-}
+    default: "#8C5E58",
+    _dark: "#8C5E58",
+  },
+};
 
 const config = {
   initialColorMode: "dark",
   useSystemColorMode: true,
 };
 
-const theme = extendTheme({ config, styles, components, fonts, colors, semanticTokens });
+const theme = extendTheme({
+  config,
+  styles,
+  components,
+  fonts,
+  colors,
+  semanticTokens,
+});
 export default theme;
