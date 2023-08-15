@@ -17,12 +17,12 @@ $ cp .env.template .env
 
 After you've created the copy, open up the new `.env` file and make sure to supply a value for each of the keys.
 
-| Key                     | Description                                                             |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `SPOTIFY_CLIENT_ID`     | The client id of your spotify oauth project                             |
-| `SPOTIFY_CLIENT_SECRET` | The client secret of your spotify oauth project                         |
-| `SPOTIFY_REDIRECT_URI`  | The redirect URL to use for the oauth flow                              |
-| `PASSKEY`               | The key to pass to the `/auth?passkey=` route to allow only you to auth |
+| Key                     | Description                                                                                                                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SPOTIFY_CLIENT_ID`     | The client id of your spotify oauth project                                                                                                                                        |
+| `SPOTIFY_CLIENT_SECRET` | The client secret of your spotify oauth project                                                                                                                                    |
+| `SPOTIFY_REDIRECT_URI`  | The redirect URL to use for the oauth flow. This should be set to `https://<your-domain>/callback` in a prod environment and `http://localhost:8888/callback` in a dev environment |
+| `PASSKEY`               | The key to pass to the `/auth?passkey=` route to allow only you to auth                                                                                                            |
 
 Once the `.env` file has been set up, you're ready to build your image.
 

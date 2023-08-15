@@ -98,7 +98,7 @@ async fn callback(
 
     if !*should_accept_callback {
         return (
-            StatusCode::UNAUTHORIZED,
+            StatusCode::PRECONDITION_FAILED,
             Json(
                 json!({ "ok": false, "err": "Tokens may not be set at this time. Please navigate to `/auth` to begin the oauth flow" }),
             ),
