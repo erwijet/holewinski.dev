@@ -1,5 +1,6 @@
 import { interleave, isNone, pipe } from "@bryx-inc/ts-utils";
 import { Box, Image, Link, Progress, Text } from "@chakra-ui/react";
+import { FaPause } from "react-icons/fa";
 import useWebSocket from "react-use-websocket";
 import { match } from "ts-pattern";
 import { z } from "zod";
@@ -45,8 +46,8 @@ export const SpotifyCard = () => {
 
   if (isNone(lastMessage)) return <></>;
 
-  return match(pipe(lastMessage.data, JSON.parse, wsMsgPayloadSchema.parse))
-    .with({ type: "update", playing: true }, ({ data }) => (
+  return match(pipe(lastMessage.data as string, JSON.parse, wsMsgPayloadSchema.parse))
+    .with({ type: "update", playing: true }, ({ data, paused }) => (
       <Box
         display="flex"
         h="40"
@@ -54,7 +55,22 @@ export const SpotifyCard = () => {
         borderWidth="1px"
         borderRadius="lg"
         overflow="hidden"
+        pos={"relative"}
       >
+        {paused && (
+          <Box
+            pos={"absolute"}
+            w="full"
+            h="full"
+            bg="rgba(20, 20, 20, 0.7)"
+            zIndex={1}
+            display={"flex"}
+            alignItems={"center"}
+            pl="8"
+          >
+            <FaPause /> &nbsp;Paused
+          </Box>
+        )}
         <Image
           src={data.images.find(({ height }) => height === 640)?.url}
           alt={data.title}
@@ -67,10 +83,23 @@ export const SpotifyCard = () => {
             Currently Listening To
           </Text>
           <Text fontSize="lg" color="gray.400">
-            <Link href={`https://open.spotify.com/track/${data.track_id.split('spotify:track:')[1]}`}>{data.title}</Link>
+            <Link
+              href={`https://open.spotify.com/track/${
+                data.track_id.split("spotify:track:")[1]
+              }`}
+            >
+              {data.title}
+            </Link>
           </Text>
           <Text fontSize="md" color="gray.600">
-            {interleave(data.artists.map(({ name, external_urls: { spotify } }) => <Link color="gray.600" href={spotify}>{name}</Link>), <>,{' '}</>)}
+            {interleave(
+              data.artists.map(({ name, external_urls: { spotify } }) => (
+                <Link color="gray.600" href={spotify}>
+                  {name}
+                </Link>
+              )),
+              <>, </>
+            )}
           </Text>
           <Progress
             value={(data.progress / data.duration) * 100}
