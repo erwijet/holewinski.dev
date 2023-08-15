@@ -45,7 +45,7 @@ const MenuLinkItem = forwardRef<MutableRefObject<HTMLAnchorElement>, LinkProps>(
 );
 
 const LINKS = {
-  Resume: "https://resume.holewisnki.dev",
+  Resume: "https://resume.holewinski.dev",
   Source: "https://github.com/erwijet/holewinski.dev",
   Linkedin: "https://linkedin.com/in/tylerholewinski",
 } as const;

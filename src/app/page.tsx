@@ -17,6 +17,7 @@ import { Socials } from "src/app/socials";
 import TylerHead from "../assets/tyler-head.png";
 
 import { SpotifyCard } from "src/common/SpotifyCard";
+import { TypeAnimation } from "react-type-animation";
 
 const ProfileImage = chakra(Image, {
   shouldForwardProp: (prop) => ["width", "height", "src", "alt"].includes(prop),
@@ -27,9 +28,26 @@ const App = () => {
       <Navbar />
       <Container mt={"24"} gap={"16px"} maxWidth={"80ch"}>
         <HStack justifyContent={"space-between"}>
-          <VStack p={"8"} rounded="lg">
+          <VStack p={"8"} rounded="lg" alignItems={'flex-start'}>
             <Heading>Tyler Holewinski</Heading>
-            <Text>Software Engineer & Coffee Lover</Text>
+            <TypeAnimation
+              sequence={[
+                "// Software Engineer & Coffee Lover",
+                5000,
+                "// Software Engineer & Plant Parent",
+                5000,
+                "// Software Engineer & Vim Lobbyist",
+                5000,
+                "// Software Engineer & Autoheart fanboy",
+                5000,
+                "// Software Engineer & Factorio Addict",
+                5000,
+                "// Software Engineer & Member of the Apple Walled Garden™",
+                5000,
+              ]}
+              repeat={Infinity}
+              speed={30}
+            />
           </VStack>
           <ProfileImage
             height={"200"}
