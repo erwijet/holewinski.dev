@@ -1,7 +1,7 @@
 "use client";
 
 import { mapKeys } from "@bryx-inc/ts-utils";
-import site from '@/site.json';
+import site from "@/site.json";
 
 import {
   Box,
@@ -91,7 +91,7 @@ export const Navbar = (props: NavbarProps) => {
         >
           {mapKeys(site.links, (key) => (
             <LinkItem key={key} href={site.links[key]}>
-              {key}
+              {key.slice(0, 1).toUpperCase() + key.slice(1)}
             </LinkItem>
           ))}
         </Stack>
@@ -107,7 +107,7 @@ export const Navbar = (props: NavbarProps) => {
             <MenuList>
               {mapKeys(site.links, (key) => (
                 <MenuItem key={key} as={MenuLinkItem} href={site.links[key]}>
-                  {key}
+                  {key.slice(0, 1).toUpperCase() + key.slice(1)}
                 </MenuItem>
               ))}
             </MenuList>

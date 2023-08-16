@@ -28,13 +28,19 @@ const App = () => {
       <Navbar />
       <Container mt={"24"} gap={"16px"} maxWidth={"80ch"}>
         <HStack justifyContent={"space-between"}>
-          <VStack p={"8"} rounded="lg" alignItems={'flex-start'}>
+          <VStack
+            pl={"4"}
+            borderLeft={"2px"}
+            borderColor="whiteAlpha.700"
+            alignItems={"flex-start"}
+          >
             <Heading>Tyler Holewinski</Heading>
             <MiniBio />
           </VStack>
           <ProfileImage
-            height={"200"}
-            width={"200"}
+            height={"150"}
+            minWidth={"150"}
+            width={"150"}
             alt="profile photo"
             src={TylerHead}
             borderRadius={"full"}
