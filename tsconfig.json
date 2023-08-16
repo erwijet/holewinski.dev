@@ -26,6 +26,9 @@
       ],
       "assets/*": [
         "./assets/*"
+      ],
+      "@/*": [
+        "./*"
       ]
     },
     "allowJs": true,

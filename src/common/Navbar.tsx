@@ -1,6 +1,8 @@
 "use client";
 
 import { mapKeys } from "@bryx-inc/ts-utils";
+import site from '@/site.json';
+
 import {
   Box,
   Container,
@@ -43,12 +45,6 @@ const LinkItem = ({ children, ...rest }: Omit<LinkItemProps, "path">) => {
 const MenuLinkItem = forwardRef<MutableRefObject<HTMLAnchorElement>, LinkProps>(
   (props, ref) => <Link ref={ref} {...props} />
 );
-
-const LINKS = {
-  Resume: "https://resume.holewinski.dev",
-  Source: "https://github.com/erwijet/holewinski.dev",
-  Linkedin: "https://linkedin.com/in/tylerholewinski",
-} as const;
 
 export type NavbarProps = DetailedHTMLProps<
   HTMLAttributes<HTMLElement>,
@@ -93,8 +89,8 @@ export const Navbar = (props: NavbarProps) => {
           flexGrow={1}
           mt={{ base: 4, md: 0 }}
         >
-          {mapKeys(LINKS, (key) => (
-            <LinkItem key={key} href={LINKS[key]}>
+          {mapKeys(site.links, (key) => (
+            <LinkItem key={key} href={site.links[key]}>
               {key}
             </LinkItem>
           ))}
@@ -109,8 +105,8 @@ export const Navbar = (props: NavbarProps) => {
               aria-label="Options"
             />
             <MenuList>
-              {mapKeys(LINKS, (key) => (
-                <MenuItem key={key} as={MenuLinkItem} href={LINKS[key]}>
+              {mapKeys(site.links, (key) => (
+                <MenuItem key={key} as={MenuLinkItem} href={site.links[key]}>
                   {key}
                 </MenuItem>
               ))}
