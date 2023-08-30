@@ -7,6 +7,7 @@ export const MiniBio = () => (
       .sort(() => (Math.random() < 0.5 ? -1 : 1)) // shuffle
       .flatMap((bio) => [`Software Engineer & ${bio}`, 5000])}
     repeat={Infinity}
-    speed={30}
+    speed={40}
+    deletionSpeed={80}
   />
 );

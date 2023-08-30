@@ -3,6 +3,7 @@
 import {
   Container,
   Divider,
+  Flex,
   HStack,
   Heading,
   Link,
@@ -26,10 +27,17 @@ const App = () => {
   return (
     <>
       <Navbar />
-      <Container mt={"24"} gap={"16px"} maxWidth={"80ch"}>
-        <HStack justifyContent={"space-between"}>
+      <Container mt={[20, 24]} gap={"16px"} maxWidth={"80ch"}>
+        <Flex
+          justifyContent={"space-between"}
+          direction={["column-reverse", "row"]}
+          alignItems={"center"}
+          gap={8}
+          pb={8}
+        >
           <VStack
             pl={"4"}
+            alignSelf={["start", "center"]}
             borderLeft={"2px"}
             borderColor="whiteAlpha.700"
             alignItems={"flex-start"}
@@ -46,10 +54,10 @@ const App = () => {
             borderRadius={"full"}
             border={"2px"}
           />
-        </HStack>
+        </Flex>
         <Stack gap="8px">
           <Heading size="lg" my="8px">
-            Hey there!
+            Hey there
           </Heading>
           <Text>
             My name is Tyler. I'm a Rochester-based fullstack web developer in
@@ -60,7 +68,7 @@ const App = () => {
         </Stack>
         <Divider my={"8"} />
         <Stack gap={"8px"}>
-          <HStack justifyContent={"space-between"}>
+          <HStack justifyContent={"space-between"} wrap={"wrap"}>
             <SpotifyCard />
             <Socials />
           </HStack>
