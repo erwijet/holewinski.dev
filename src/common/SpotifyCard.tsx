@@ -44,7 +44,9 @@ const wsMsgPayloadSchema = z.union([
 export const SpotifyCard = () => {
   const { lastMessage } = useWebSocket("wss://spotify.holewinski.dev/ws");
 
-  if (isNone(lastMessage)) return <></>;
+  if (isNone(lastMessage)) return <Box display="flex" h="40" w="md" borderWidth={"1px"} borderRadius={"lg"} overflow={"hidden"}>
+    Loading...
+  </Box>
 
   return match(pipe(lastMessage.data as string, JSON.parse, wsMsgPayloadSchema.parse))
     .with({ type: "update", playing: true }, ({ data, paused }) => (

@@ -1,5 +1,3 @@
-"use client";
-
 import { mapKeys } from "@bryx-inc/ts-utils";
 import site from "@/site.json";
 
