@@ -210,7 +210,7 @@ async fn main() {
     let prev_track_progress_tx = Arc::new(Mutex::<i64>::new(0));
 
     tokio::spawn(async move {
-        let mut interval = interval(Duration::from_secs(3));
+        let mut interval = interval(Duration::from_secs(2));
         interval.tick().await;
 
         loop {
