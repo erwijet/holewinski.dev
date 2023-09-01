@@ -1,26 +1,25 @@
-use std::{ net::SocketAddr, sync::Arc, time::Duration };
+use std::{net::SocketAddr, sync::Arc, time::Duration};
 use tokio::time::interval;
 
 use axum::{
-    extract::{ ws::{ Message, WebSocket }, ConnectInfo, Query, State, WebSocketUpgrade },
+    extract::{
+        ws::{Message, WebSocket},
+        ConnectInfo, Query, State, WebSocketUpgrade,
+    },
     http::StatusCode,
-    response::{ IntoResponse, Redirect },
+    response::{IntoResponse, Redirect},
     routing::get,
-    Json,
-    Router,
+    Json, Router,
 };
 use dotenv::dotenv;
 use rspotify::{
-    model::{ AdditionalType, CurrentlyPlayingContext, Image, PlayableItem, SimplifiedArtist },
+    model::{AdditionalType, CurrentlyPlayingContext, Image, PlayableItem, SimplifiedArtist},
     prelude::OAuthClient,
     scopes,
     sync::Mutex,
-    AuthCodeSpotify,
-    Config,
-    Credentials,
-    OAuth,
+    AuthCodeSpotify, Config, Credentials, OAuth,
 };
-use serde::{ Deserialize, Serialize };
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 #[derive(Serialize)]
@@ -66,7 +65,8 @@ impl<T> Flatten<T> for Option<Option<T>> {
 
 async fn get_listening_data(spotify: &AuthCodeSpotify) -> Option<SpotifyListeningInfo> {
     let current_playing = spotify
-        .current_playing(None, Some(vec![&AdditionalType::Track])).await
+        .current_playing(None, Some(vec![&AdditionalType::Track]))
+        .await
         .unwrap()?;
 
     current_playing.try_into().ok()
@@ -90,7 +90,7 @@ struct GetCallbackQuery {
 
 async fn callback(
     Query(query): Query<GetCallbackQuery>,
-    State(state): State<AppData>
+    State(state): State<AppData>,
 ) -> impl IntoResponse {
     let code = &query.code;
     let spotify = state.spotify.lock().await.unwrap();
@@ -100,7 +100,7 @@ async fn callback(
         return (
             StatusCode::PRECONDITION_FAILED,
             Json(
-                json!({ "ok": false, "err": "Tokens may not be set at this time. Please navigate to `/auth` to begin the oauth flow" })
+                json!({ "ok": false, "err": "Tokens may not be set at this time. Please navigate to `/auth` to begin the oauth flow" }),
             ),
         );
     }
@@ -124,7 +124,7 @@ struct GetSpotifyAuthQuery {
 
 async fn auth(
     Query(query): Query<GetSpotifyAuthQuery>,
-    State(state): State<AppData>
+    State(state): State<AppData>,
 ) -> impl IntoResponse {
     let spotify = state.spotify.lock().await.unwrap();
     let url = spotify.get_authorize_url(false).unwrap();
@@ -133,7 +133,8 @@ async fn auth(
         return (
             StatusCode::UNAUTHORIZED,
             Json(json!({ "ok": false, "err": "missing or invalid invalid passkey" })),
-        ).into_response();
+        )
+            .into_response();
     }
 
     let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
@@ -145,7 +146,7 @@ async fn auth(
 async fn ws_handler(
     ws: WebSocketUpgrade,
     State(state): State<AppData>,
-    ConnectInfo(addr): ConnectInfo<SocketAddr>
+    ConnectInfo(addr): ConnectInfo<SocketAddr>,
 ) -> impl IntoResponse {
     println!("Incoming connect from {addr}...");
 
@@ -159,29 +160,6 @@ async fn ws_handler(
             if let Err(err) = socket.send(Message::Text(payload)).await {
                 println!("!!! Failed to send update to {addr}. Failed with {err}");
                 return;
-            }
-        }
-
-        let spotify = state.spotify.lock().await.unwrap();
-
-        if
-            let Some(msg) = get_listening_data(&spotify).await
-                .map_or_else(
-                    ||
-                        serde_json::to_string(
-                            &json!({ "type": "update", "ok": true, "playing": false })
-                        ),
-                    |data| {
-                        serde_json::to_string(
-                            &json!({ "type": "update", "ok": true, "playing": true, "paused": false, "data": data })
-                        )
-                    }
-                )
-                .ok()
-                .map(|str| Message::Text(str))
-        {
-            if let Err(err) = socket.send(msg.clone()).await {
-                println!("!!! Failed to send message to client. Failed with error: {err}");
             }
         }
 
@@ -204,7 +182,7 @@ async fn main() {
 
     let creds = Credentials::new(
         &*std::env::var("SPOTIFY_CLIENT_ID").expect("reading env var `SPOTIFY_CLIENT_ID`"),
-        &*std::env::var("SPOTIFY_CLIENT_SECRET").expect("reading env var `SPOTIFY_CLIENT_SECRET`")
+        &*std::env::var("SPOTIFY_CLIENT_SECRET").expect("reading env var `SPOTIFY_CLIENT_SECRET`"),
     );
 
     let conf = Config {
@@ -214,8 +192,7 @@ async fn main() {
 
     let oauth = OAuth {
         scopes: scopes!("user-read-currently-playing"),
-        redirect_uri: std::env
-            ::var("SPOTIFY_REDIRECT_URI")
+        redirect_uri: std::env::var("SPOTIFY_REDIRECT_URI")
             .expect("reading env var `SPOTIFY_REDIRECT_URI`"),
         ..Default::default()
     };
@@ -248,30 +225,31 @@ async fn main() {
                 continue;
             }
 
-            if
-                let Some(msg) = get_listening_data(&spotify).await
-                    .map_or_else(
-                        ||
-                            serde_json::to_string(
-                                &json!({ "type": "update", "ok": true, "playing": false })
-                            ),
-                        |data| {
-                            let paused = data.progress == *previous_track_progress;
-                            *previous_track_progress = data.progress;
+            if let Some(msg) = get_listening_data(&spotify)
+                .await
+                .map_or_else(
+                    || serde_json::to_string(&json!({ "type": "update", "ok": true, "playing": false })),
+                    |data| {
+                        let paused = data.progress == *previous_track_progress;
+                        *previous_track_progress = data.progress;
 
-                            serde_json::to_string(
-                                &json!({ "type": "update", "ok": true, "playing": true, "paused": paused, "data": data })
-                            )
-                        }
-                    )
-                    .ok()
-                    .map(|str| Message::Text(str))
+                        serde_json::to_string(
+                            &json!({ "type": "update", "ok": true, "playing": true, "paused": paused, "data": data }),
+                        )
+                    },
+                )
+                .ok()
+                .map(|str| Message::Text(str))
             {
                 let len = clients.len();
                 for index in (0..len).rev() {
                     if let Err(err) = clients[index].send(msg.clone()).await {
                         println!("!!! Failed to send message to client. Failed with error: {err}");
-                        clients.remove(index).close().await.ok(); // allow failure-- it's possible the ws has a broken pipe
+                        clients
+                            .remove(index)
+                            .close()
+                            .await
+                            .ok(); // allow failure-- it's possible the ws has a broken pipe
                     }
                 }
             }
@@ -286,8 +264,8 @@ async fn main() {
         .route("/ws", get(ws_handler))
         .with_state(app_data);
 
-    axum::Server
-        ::bind(&SocketAddr::from(([0, 0, 0, 0], 8888)))
-        .serve(app.into_make_service_with_connect_info::<SocketAddr>()).await
+    axum::Server::bind(&SocketAddr::from(([0, 0, 0, 0], 8888)))
+        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+        .await
         .unwrap();
 }
