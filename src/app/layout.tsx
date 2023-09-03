@@ -46,6 +46,7 @@ export default function RootLayout({
         <title>Tyler Holewinski</title>
       </head>
       <body>
+        <a rel="me" href="https://mastodon.social/@erwijet" style={{ display: 'none' }}>Mastodon</a>
         <Providers>{children}</Providers>
       </body>
     </html>

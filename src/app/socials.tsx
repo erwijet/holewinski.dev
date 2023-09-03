@@ -1,4 +1,4 @@
-import { FaGithub, FaLinkedinIn, FaTwitter } from "react-icons/fa";
+import { FaGithub, FaLinkedinIn, FaMastodon, FaTwitter } from "react-icons/fa";
 import { HStack, Link, Stack, Text } from "@chakra-ui/react";
 
 export const Socials = () => {
@@ -21,6 +21,14 @@ export const Socials = () => {
         <Text>Linkedin &#8212;</Text>
         <Link href="https://linkedin.com/in/tylerholewinski">
           in/tylerholewinski
+        </Link>
+      </HStack>
+
+      <HStack>
+        <FaMastodon />
+        <Text>Mastodon &#8212;</Text>
+        <Link href="https://mastodon.social/@erwijet">
+          @erwijet@mastodon.social
         </Link>
       </HStack>
     </Stack>
