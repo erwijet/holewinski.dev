@@ -1,5 +1,6 @@
-use std::{net::SocketAddr, sync::Arc, time::Duration};
-use tokio::time::interval;
+use dispatch::spotify_ws_dispatch;
+use futures::lock::Mutex;
+use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
     extract::{
@@ -15,12 +16,12 @@ use dotenv::dotenv;
 use rspotify::{
     model::{AdditionalType, CurrentlyPlayingContext, Image, PlayableItem, SimplifiedArtist},
     prelude::OAuthClient,
-    scopes,
-    sync::Mutex,
-    AuthCodeSpotify, Config, Credentials, OAuth,
+    scopes, AuthCodeSpotify, Config, Credentials, OAuth,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+
+mod dispatch;
 
 #[derive(Serialize)]
 struct SpotifyListeningInfo {
@@ -45,6 +46,7 @@ impl TryFrom<CurrentlyPlayingContext> for SpotifyListeningInfo {
                 progress: value.progress.map_or(0, |progress| progress.num_seconds()),
             })
         } else {
+            eprintln!("Failed spt payload conversion. got: {value:?}");
             Err(())
         }
     }
@@ -77,7 +79,7 @@ async fn healthcheck() -> impl IntoResponse {
 }
 
 async fn current(State(state): State<AppData>) -> impl IntoResponse {
-    let spotify = state.spotify.lock().await.unwrap();
+    let spotify = state.spotify.lock().await;
     let data = get_listening_data(&spotify).await;
 
     Json(json!({ "ok": true, "has_data": data.is_some(), "data": data }))
@@ -93,8 +95,8 @@ async fn callback(
     State(state): State<AppData>,
 ) -> impl IntoResponse {
     let code = &query.code;
-    let spotify = state.spotify.lock().await.unwrap();
-    let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
+    let spotify = state.spotify.lock().await;
+    let mut should_accept_callback = state.should_accept_callback.lock().await;
 
     if !*should_accept_callback {
         return (
@@ -126,7 +128,7 @@ async fn auth(
     Query(query): Query<GetSpotifyAuthQuery>,
     State(state): State<AppData>,
 ) -> impl IntoResponse {
-    let spotify = state.spotify.lock().await.unwrap();
+    let spotify = state.spotify.lock().await;
     let url = spotify.get_authorize_url(false).unwrap();
 
     if query.passkey != std::env::var("PASSKEY").expect("fetching env var `PASSKEY`") {
@@ -137,7 +139,7 @@ async fn auth(
             .into_response();
     }
 
-    let mut should_accept_callback = state.should_accept_callback.lock().await.unwrap();
+    let mut should_accept_callback = state.should_accept_callback.lock().await;
 
     *should_accept_callback = true;
     Redirect::temporary(&url).into_response()
@@ -163,7 +165,7 @@ async fn ws_handler(
             }
         }
 
-        state.ws_clients.lock().await.unwrap().push(socket);
+        state.ws_clients.lock().await.push(socket);
     })
 }
 
@@ -205,56 +207,10 @@ async fn main() {
         ws_clients: Arc::new(Mutex::new(vec![])),
     };
 
-    let spotify_tx = app_data.spotify.clone();
-    let ws_clients_tx = app_data.ws_clients.clone();
-    let prev_track_progress_tx = Arc::new(Mutex::<i64>::new(0));
-
-    tokio::spawn(async move {
-        let mut interval = interval(Duration::from_secs(2));
-        interval.tick().await;
-
-        loop {
-            interval.tick().await;
-
-            let mut clients = ws_clients_tx.lock().await.unwrap();
-            let mut previous_track_progress = prev_track_progress_tx.lock().await.unwrap();
-            let spotify = spotify_tx.lock().await.unwrap();
-
-            if clients.is_empty() {
-                println!("No clients... skipping for this tick. Clients: '{clients:?}'");
-                continue;
-            }
-
-            if let Some(msg) = get_listening_data(&spotify)
-                .await
-                .map_or_else(
-                    || serde_json::to_string(&json!({ "type": "update", "ok": true, "playing": false })),
-                    |data| {
-                        let paused = data.progress == *previous_track_progress;
-                        *previous_track_progress = data.progress;
-
-                        serde_json::to_string(
-                            &json!({ "type": "update", "ok": true, "playing": true, "paused": paused, "data": data }),
-                        )
-                    },
-                )
-                .ok()
-                .map(|str| Message::Text(str))
-            {
-                let len = clients.len();
-                for index in (0..len).rev() {
-                    if let Err(err) = clients[index].send(msg.clone()).await {
-                        println!("!!! Failed to send message to client. Failed with error: {err}");
-                        clients
-                            .remove(index)
-                            .close()
-                            .await
-                            .ok(); // allow failure-- it's possible the ws has a broken pipe
-                    }
-                }
-            }
-        }
-    });
+    tokio::spawn(spotify_ws_dispatch(
+        app_data.ws_clients.clone(),
+        app_data.spotify.clone(),
+    ));
 
     let app = Router::new()
         .route("/", get(healthcheck))
