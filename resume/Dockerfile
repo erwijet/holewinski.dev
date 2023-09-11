@@ -3,8 +3,10 @@ WORKDIR /resume
 
 RUN apt update && apt install -y wget
 RUN mkdir -p ~/.local/share/fonts
-RUN wget -O ~/.local/share/fonts/Avenir.ttf\
-	https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Medium.ttf
+RUN wget -O ~/.local/share/fonts/Avenir-Medium.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Medium.ttf
+RUN wget -O ~/.local/share/fonts/Avenir-Heavy.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Heavy.ttf
+RUN wget -O ~/.local/share/fonts/Avenir-Oblique.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Oblique.ttf
+RUN wget -O ~/.local/share/fonts/Avenir-HeavyOblique.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-HeavyOblique.ttf
 RUN fc-cache -f -v
 
 
