@@ -1,5 +1,6 @@
 use dispatch::spotify_ws_dispatch;
 use futures::lock::Mutex;
+use heartbeat::ws_heartbeat;
 use std::{net::SocketAddr, sync::Arc};
 
 use axum::{
@@ -22,6 +23,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 mod dispatch;
+mod heartbeat;
 
 #[derive(Serialize)]
 struct SpotifyListeningInfo {
@@ -211,6 +213,8 @@ async fn main() {
         app_data.ws_clients.clone(),
         app_data.spotify.clone(),
     ));
+
+    tokio::spawn(ws_heartbeat(app_data.ws_clients.clone()));
 
     let app = Router::new()
         .route("/", get(healthcheck))
