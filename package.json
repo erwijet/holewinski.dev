@@ -16,6 +16,7 @@
     "@chakra-ui/react": "^2.7.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@erwijet/react-spotify-current-song": "^1.0.1",
     "@fontsource/m-plus-rounded-1c": "^5.0.5",
     "@fontsource/raleway": "^5.0.5",
     "framer-motion": "^10.12.21",
@@ -24,7 +25,6 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.10.1",
     "react-type-animation": "^3.1.0",
-    "react-use-websocket": "^4.3.1",
     "ts-pattern": "^5.0.5",
     "zod": "^3.21.4"
   },

@@ -1,54 +1,37 @@
-import { interleave, isNone, pipe } from "@bryx-inc/ts-utils";
+import { Maybe, interleave, isNone } from "@bryx-inc/ts-utils";
 import { Box, Image, Link, Progress, Text } from "@chakra-ui/react";
 import { FaPause } from "react-icons/fa";
-import useWebSocket from "react-use-websocket";
 import { match } from "ts-pattern";
-import { z } from "zod";
 
-const wsMsgPayloadSchema = z.union([
-  z.object({
-    type: z.literal("ack"),
-  }),
-  z.object({
-    type: z.literal("update"),
-    playing: z.literal(false),
-  }),
-  z.object({
-    type: z.literal("update"),
-    playing: z.literal(true),
-    paused: z.boolean(),
-    data: z.object({
-      title: z.string(),
-      duration: z.number(),
-      progress: z.number(),
-      track_id: z.string(),
-      artists: z
-        .object({
-          external_urls: z.object({ spotify: z.string() }),
-          href: z.string(),
-          id: z.string(),
-          name: z.string(),
-        })
-        .array(),
-      images: z
-        .object({
-          height: z.union([z.literal(640), z.literal(300), z.literal(64)]),
-          width: z.union([z.literal(640), z.literal(300), z.literal(64)]),
-          url: z.string(),
-        })
-        .array(),
-    }),
-  }),
-]);
+import {
+  Payload,
+  useCurrentSpotifySong,
+} from "@erwijet/react-spotify-current-song";
+import { useState } from "react";
 
 export const SpotifyCard = () => {
-  const { lastMessage } = useWebSocket("wss://spotify.holewinski.dev/ws");
+  const [data, setData] = useState<Maybe<Payload>>(null);
 
-  if (isNone(lastMessage)) return <Box display="flex" h="40" w="md" borderWidth={"1px"} borderRadius={"lg"} overflow={"hidden"}>
-    Loading...
-  </Box>
+  useCurrentSpotifySong({
+    host: "wss://spotify.holewinski.dev/ws",
+    onUpdate: (payload) => setData(payload),
+  });
 
-  return match(pipe(lastMessage.data as string, JSON.parse, wsMsgPayloadSchema.parse))
+  if (isNone(data))
+    return (
+      <Box
+        display="flex"
+        h="40"
+        w="md"
+        borderWidth={"1px"}
+        borderRadius={"lg"}
+        overflow={"hidden"}
+      >
+        Loading...
+      </Box>
+    );
+
+  return match(data)
     .with({ type: "update", playing: true }, ({ data, paused }) => (
       <Box
         display="flex"

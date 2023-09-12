@@ -63,6 +63,13 @@
   dependencies:
     react "^18.2.0"
 
+"@bryx-inc/ts-utils@^1.60.0":
+  version "1.60.0"
+  resolved "https://registry.yarnpkg.com/@bryx-inc/ts-utils/-/ts-utils-1.60.0.tgz#fdbe74404516dfe4345b8d85ccba6f07909d173e"
+  integrity sha512-iFDJGNUW9BdZfsp/jgha2VNXcBcfml3f9CGLOfMc5G2KjAOPEWm+RgbWg3VPbhn/iN5Q1MQT3ZICW5IAPbp/Ww==
+  dependencies:
+    react "^18.2.0"
+
 "@chakra-ui/accordion@2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@chakra-ui/accordion/-/accordion-2.2.0.tgz#a38ed8e7d0a7ccc6910282f913c42cf6deea7215"
@@ -994,6 +1001,16 @@
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.3.1.tgz#d0fce5d07b0620caa282b5131c297bb60f9d87e6"
   integrity sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==
+
+"@erwijet/react-spotify-current-song@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@erwijet/react-spotify-current-song/-/react-spotify-current-song-1.0.1.tgz#d01394df8ec4899a06dd20c84cbfa09ee6d44abf"
+  integrity sha512-QQ5e5ubEO4hFcJx9UHHh/d+OG1ZXjnwgXz0Vtvx9UMw2SpuX40HKzrm5iwdtLDplkxrsdZSpH2rMe8D42WWdbg==
+  dependencies:
+    "@bryx-inc/ts-utils" "^1.60.0"
+    react-use-websocket "^4.4.0"
+    ts-pattern "^5.0.5"
+    zod "^3.22.2"
 
 "@esbuild/android-arm64@0.18.12":
   version "0.18.12"
@@ -2493,10 +2510,10 @@ react-type-animation@^3.1.0:
   resolved "https://registry.yarnpkg.com/react-type-animation/-/react-type-animation-3.1.0.tgz#7bc3d5e73d8f4677a7808365beaa12f0fee3e033"
   integrity sha512-Ju74SpUFpSINqlGU8UeFAF+AnAn0nZcc8MB0Ho6QvRkh8uDKkOzAiMD3l9xEmkbKXnSYsljfVgIDM/zwqEImpQ==
 
-react-use-websocket@^4.3.1:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/react-use-websocket/-/react-use-websocket-4.3.1.tgz#13cd2fd2e0fb90010482ab2858f8ae81f2ce85c2"
-  integrity sha512-zHPLWrgcqydJaak2O5V9hiz4q2dwkwqNQqpgFVmSuPxLZdsZlnDs8DVHy3WtHH+A6ms/8aHIyX7+7ulOcrnR0Q==
+react-use-websocket@^4.4.0:
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/react-use-websocket/-/react-use-websocket-4.4.0.tgz#6cb53197ce6abe4c6902bec74ca2ed0b935c3887"
+  integrity sha512-V48JEPMwTUp31oXxBZYTk27aHOHwTeYEhCOb2uPXwcnzolMkLacesRdu4TmEuN5QeuKRenEjCBMVKPsB98aaDg==
 
 react@^18.2.0:
   version "18.2.0"
@@ -2796,3 +2813,8 @@ zod@3.21.4, zod@^3.21.4:
   version "3.21.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
+
+zod@^3.22.2:
+  version "3.22.2"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.2.tgz#3add8c682b7077c05ac6f979fea6998b573e157b"
+  integrity sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==
