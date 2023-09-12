@@ -83,18 +83,14 @@ pub async fn spotify_ws_dispatch(
 
         // calculate if an update needs to be emitted
 
-        if should_emit_client_update(
-            &listening_data,
-            &prev_data,
-            &cur_time,
-            &prev_time,
-        ) {
+        if should_emit_client_update(&listening_data, &prev_data, &cur_time, &prev_time) {
             let msg = match get_listening_data(&spt_authcode).await {
                 Some(data) => Message::Text(
                     serde_json::to_string(&json! {{
                         "ok": true,
                         "type": "update",
                         "playing": true,
+                        "paused": if let Some(prev_data) = prev_data { prev_data.progress == data.progress } else { false },
                         "data": data
                     }})
                     .unwrap(),
@@ -119,7 +115,7 @@ pub async fn spotify_ws_dispatch(
                 }
             }
         }
-        
+
         prev_data = listening_data;
         prev_time = cur_time;
     }
