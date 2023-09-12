@@ -156,15 +156,50 @@ async fn ws_handler(
 
     ws.on_upgrade(move |mut socket| async move {
         if socket.send(Message::Ping(vec![5, 8, 7, 8])).await.is_err() {
-            println!("!!! Failed to send ping to {addr}");
+            println!("!! Failed to send ack to incoming socket. Client will not be added.");
             return;
         }
 
         if let Ok(payload) = serde_json::to_string(&json!({ "type": "ack", "ok": true })) {
-            if let Err(err) = socket.send(Message::Text(payload)).await {
-                println!("!!! Failed to send update to {addr}. Failed with {err}");
+            if socket.send(Message::Text(payload)).await.is_err() {
+                println!("!! Failed to send ack to incoming socket. Client will not be added.");
                 return;
             }
+        }
+
+        let msg = {
+            let spt_authcode = state.spotify.lock().await;
+
+            // calculate if an update needs to be emitted
+
+            match get_listening_data(&spt_authcode).await {
+                Some(data) => Message::Text(
+                    serde_json::to_string(&json! {{
+                        "ok": true,
+                        "type": "update",
+                        "playing": true,
+                        "paused": false,
+                        "data": data
+                    }})
+                    .unwrap(),
+                ),
+
+                None => Message::Text(
+                    serde_json::to_string(&json! {{
+                        "ok": true,
+                        "type": "update",
+                        "playing": false,
+                    }})
+                    .unwrap(),
+                ),
+            }
+        };
+
+        if socket.send(msg).await.is_err() {
+            println!(
+                "!! Failed to send initial payload to incoming socket. Client will not be added."
+            );
+            return;
         }
 
         state.ws_clients.lock().await.push(socket);
