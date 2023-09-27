@@ -61,6 +61,7 @@ pub async fn spotify_ws_dispatch(
 ) {
     let mut prev_data: Option<SpotifyListeningInfo> = None;
     let mut prev_time = std::time::Instant::now().into();
+    let mut prev_client_count = 0;
 
     let mut interval = interval(Duration::from_secs(2));
     interval.tick().await;
@@ -73,6 +74,7 @@ pub async fn spotify_ws_dispatch(
 
         if clients.is_empty() {
             println!("No clients... skipping for this tick");
+            prev_client_count = 0;
             continue;
         }
 
@@ -83,7 +85,7 @@ pub async fn spotify_ws_dispatch(
 
         // calculate if an update needs to be emitted
 
-        if should_emit_client_update(&listening_data, &prev_data, &cur_time, &prev_time) {
+        if prev_client_count != clients.len() || should_emit_client_update(&listening_data, &prev_data, &cur_time, &prev_time) {
             let msg = match get_listening_data(&spt_authcode).await {
                 Some(data) => Message::Text(
                     serde_json::to_string(&json! {{
@@ -118,5 +120,6 @@ pub async fn spotify_ws_dispatch(
 
         prev_data = listening_data;
         prev_time = cur_time;
+        prev_client_count = clients.len();
     }
 }
