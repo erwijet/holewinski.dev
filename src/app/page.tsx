@@ -4,7 +4,6 @@ import {
   Container,
   Divider,
   Flex,
-  HStack,
   Heading,
   Link,
   Stack,
@@ -15,19 +14,37 @@ import {
 import Image from "next/image";
 import { Navbar } from "src/common/Navbar";
 import { Socials } from "src/app/socials";
-import TylerHead from "../assets/tyler-head.png";
 
 import { SpotifyCard } from "src/common/SpotifyCard";
 import { MiniBio } from "./minibio";
 
-const ProfileImage = chakra(Image, {
+import Profile from "@/src/assets/profile.png";
+import RitBrand from "@/src/assets/ritz.jpeg";
+import BryxBrand from "@/src/assets/bryx.jpeg";
+
+function getFormattedTimeBetween(d1: Date, d2: Date): string {
+  const millisecondsPerMonth = 30.44 * 24 * 60 * 60 * 1000; // appx
+
+  const delta = d2.getTime() - d1.getTime();
+
+  const years = Math.floor(delta / (millisecondsPerMonth * 12));
+  const months = Math.floor(
+    (delta % (millisecondsPerMonth * 12)) / millisecondsPerMonth
+  );
+
+  return `${years == 1 ? years + " year " : years > 1 ? years + " years " : ""}${
+    months == 1 ? months + " month" : months > 1 ? months + " months" : ""
+  }`;
+}
+
+const ChakraNextImage = chakra(Image, {
   shouldForwardProp: (prop) => ["width", "height", "src", "alt"].includes(prop),
 });
 const App = () => {
   return (
     <>
       <Navbar />
-      <Container mt={[20, 24]} gap={"16px"} maxWidth={"80ch"}>
+      <Container mt={[20, 24]} gap={"16px"} maxWidth={"85ch"}>
         <Flex
           justifyContent={"space-between"}
           direction={["column-reverse", "row"]}
@@ -45,34 +62,99 @@ const App = () => {
             <Heading>Tyler Holewinski</Heading>
             <MiniBio />
           </VStack>
-          <ProfileImage
-            height={"150"}
-            minWidth={"150"}
-            width={"150"}
+          <ChakraNextImage
+            height={"250"}
+            minWidth={"250"}
+            width={"250"}
             alt="profile photo"
-            src={TylerHead}
-            borderRadius={"full"}
+            src={Profile}
+            borderRadius={"lg"}
             border={"2px"}
           />
         </Flex>
         <Stack gap="8px">
           <Heading size="lg" my="8px">
-            Hey there
+            Hey There!
           </Heading>
           <Text>
-            My name is Tyler. I'm a Rochester-based fullstack web developer in
-            New York. I'm working full-time, while also persuing my B.S. at{" "}
-            <Link href="https://rit.edu">RIT</Link>. I'd love to tell you a
-            little about myself.
+            My name is Tyler, I'm fullstack developer in New York working
+            fulltime at Bryx building cloud software for first reponders. I'd
+            love to tell you a little bit about myself!
           </Text>
         </Stack>
         <Divider my={"8"} />
-        <Stack gap={"8px"}>
-          <HStack justifyContent={"space-between"} wrap={"wrap"}>
-            <SpotifyCard />
-            <Socials />
-          </HStack>
+
+        <Stack>
+          <Heading size="lg" my="16px">
+            Experience
+          </Heading>
+          <Flex gap="24px" direction={["column", "row"]} align={"center"}>
+            <ChakraNextImage
+              src={BryxBrand}
+              alt="bryx logo"
+              width={"150"}
+              height={"150"}
+              rounded={"md"}
+              minWidth={"150"}
+              borderRadius={"lg"}
+              border={"2px"}
+            />
+            <Stack>
+              <Flex justify={"space-between"} direction={["column", "row"]}>
+                <Heading size="md">
+                  <Link href="https://bryx.com">Bryx</Link> &#8212; Software
+                  Engineer
+                </Heading>
+                <Text>
+                  May 2022 &#8212; Present (
+                  {getFormattedTimeBetween(new Date("2022-05-1"), new Date())})
+                </Text>
+              </Flex>
+              <Text>
+                At Bryx, I work with a small team to bring a cloud-based
+                solution to first responders and their agencies by building
+                software that integrate all aspects of the incident lifecycle,
+                from dispatch to alerting and reporting.
+              </Text>
+            </Stack>
+          </Flex>
+
+          <Flex gap="24px" direction={["column", "row"]} align={"center"}>
+            <ChakraNextImage
+              src={RitBrand}
+              alt="rit logo"
+              width={"150"}
+              height={"150"}
+              rounded={"md"}
+              minWidth={"150"}
+              borderRadius={"lg"}
+              border={"2px"}
+            />
+            <Stack>
+              <Flex justify={"space-between"} direction={["column", "row"]}>
+                <Heading size="md">
+                  <Link href="https://rit.edu/its">RIT ITS</Link> &#8212; Helpdesk Technician
+                </Heading>
+                <Text>
+                  Sept 2021 &#8212; May 2022 ({getFormattedTimeBetween(new Date("2021-09-1"), new Date("2022-05-01"))})
+                </Text>
+              </Flex>
+              <Text>
+                While living on campus I worked at the RIT ITS helpdesk, where I assisted with GSuite/LDAP account management for students and staff, device troubleshooting, and all other level-1 techincal issues for the university.
+              </Text>
+            </Stack>
+          </Flex>
         </Stack>
+        <Divider my="8" />
+        <Flex
+          justifyContent="space-between"
+          gap="16px"
+          direction={["column", "row"]}
+          align={["start", "center"]}
+        >
+          <SpotifyCard />
+          <Socials />
+        </Flex>
         <Divider my={"8"} />
       </Container>
     </>

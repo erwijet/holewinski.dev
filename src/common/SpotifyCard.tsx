@@ -19,16 +19,16 @@ export const SpotifyCard = () => {
 
   if (isNone(data))
     return (
-      <Box
-        display="flex"
-        h="40"
-        w="md"
-        borderWidth={"1px"}
-        borderRadius={"lg"}
-        overflow={"hidden"}
-      >
-        Loading...
-      </Box>
+      <></>
+      // <Box
+      //   display="flex"
+      //   h="40"
+      //   w="md"
+      //   borderWidth={"1px"}
+      //   borderRadius={"lg"}
+      //   overflow={"hidden"}
+      // >
+      // </Box>
     );
 
   return match(data)
