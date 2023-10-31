@@ -107,7 +107,7 @@ const App = () => {
                 </Heading>
                 <Text>
                   May 2022 &#8212; Present (
-                  {getFormattedTimeBetween(new Date("2022-05-1"), new Date())})
+                  {getFormattedTimeBetween(new Date("2022/05/01"), new Date())})
                 </Text>
               </Flex>
               <Text>
@@ -136,7 +136,7 @@ const App = () => {
                   <Link href="https://rit.edu/its">RIT ITS</Link> &#8212; Helpdesk Technician
                 </Heading>
                 <Text>
-                  Sept 2021 &#8212; May 2022 ({getFormattedTimeBetween(new Date("2021-09-1"), new Date("2022-05-01"))})
+                  Sept 2021 &#8212; May 2022 ({getFormattedTimeBetween(new Date("2021/09/01"), new Date("2022/05/01"))})
                 </Text>
               </Flex>
               <Text>
