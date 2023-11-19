@@ -1,4 +1,5 @@
-import { Maybe, interleave, isNone } from "@bryx-inc/ts-utils";
+import { isNone } from "@tsly/maybe";
+import { arr } from "@tsly/arr";
 import { Box, Image, Link, Progress, Text } from "@chakra-ui/react";
 import { FaPause } from "react-icons/fa";
 import { match } from "ts-pattern";
@@ -10,7 +11,7 @@ import {
 import { useState } from "react";
 
 export const SpotifyCard = () => {
-  const [data, setData] = useState<Maybe<Payload>>(null);
+  const [data, setData] = useState<Payload | null>(null);
 
   useCurrentSpotifySong({
     host: "wss://spotify.holewinski.dev/ws",
@@ -77,14 +78,15 @@ export const SpotifyCard = () => {
             </Link>
           </Text>
           <Text fontSize="md" color="gray.600">
-            {interleave(
+            {arr(
               data.artists.map(({ name, external_urls: { spotify } }) => (
                 <Link color="gray.600" href={spotify}>
                   {name}
                 </Link>
-              )),
-              <>, </>
-            )}
+              ))
+            )
+              .interleave(<></>)
+              .take()}
           </Text>
           <Progress
             value={(data.progress / data.duration) * 100}

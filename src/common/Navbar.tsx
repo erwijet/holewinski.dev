@@ -1,4 +1,3 @@
-import { mapKeys } from "@bryx-inc/ts-utils";
 import site from "@/site.json";
 
 import {
@@ -23,6 +22,7 @@ import {
   forwardRef,
 } from "react";
 import { FaBars } from "react-icons/fa";
+import { obj } from "@tsly/obj";
 
 type LinkItemProps = {
   path: string;
@@ -87,7 +87,7 @@ export const Navbar = (props: NavbarProps) => {
           flexGrow={1}
           mt={{ base: 4, md: 0 }}
         >
-          {mapKeys(site.links, (key) => (
+          {obj(site.links).keys.map((key) => (
             <LinkItem key={key} href={site.links[key]}>
               {key.slice(0, 1).toUpperCase() + key.slice(1)}
             </LinkItem>
@@ -103,7 +103,7 @@ export const Navbar = (props: NavbarProps) => {
               aria-label="Options"
             />
             <MenuList>
-              {mapKeys(site.links, (key) => (
+              {obj(site.links).keys.map((key) => (
                 <MenuItem key={key} as={MenuLinkItem} href={site.links[key]}>
                   {key.slice(0, 1).toUpperCase() + key.slice(1)}
                 </MenuItem>
