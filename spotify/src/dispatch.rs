@@ -50,6 +50,7 @@ fn should_emit_client_update(
             let time_delta: i64 = (prev_time - cur_time).as_millis().try_into().unwrap_or(0);
 
             let jitter = (progress_delta - time_delta).abs();
+            println!("jitter: {jitter}");
             jitter > THRESHOLD_MS
         }
     }
