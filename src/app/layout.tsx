@@ -1,4 +1,21 @@
+import { Metadata } from "next";
 import { Providers } from "./providers";
+import { jsonld } from "@/site.json";
+
+export const metadata: Metadata = {
+  description: "holewinski.dev - Tyler Holewinski's personal site",
+  keywords: [
+    "typescript",
+    "react",
+    "javascript",
+    "engineering",
+    "computer science",
+    "react",
+    "RIT",
+    "rochester ny",
+  ],
+  title: "Tyler Holewinski",
+};
 
 export default function RootLayout({
   children,
@@ -34,19 +51,29 @@ export default function RootLayout({
         <meta name="twitter:creator" content="@erwijet" />
         <meta
           name="twitter:image"
-          content="https://www.holewinski.dev/code_vibes.jpg"
+          content="https://www.holewinski.dev/profile.png"
         />
         <meta property="og:site_name" content="Tyler Holewinski" />
         <meta property="og:title" content="Tyler Holewinski" />
         <meta property="og:type" content="website" />
         <meta
           property="og:type"
-          content="https://www.holewinski.dev/code_vibes.jpg"
+          content="https://www.holewinski.dev/profile.png"
         />
         <title>Tyler Holewinski</title>
       </head>
       <body>
-        <a rel="me" href="https://mastodon.social/@erwijet" style={{ display: 'none' }}>Mastodon</a>
+        <a
+          rel="me"
+          href="https://mastodon.social/@erwijet"
+          style={{ display: "none" }}
+        >
+          Mastodon
+        </a>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonld) }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
