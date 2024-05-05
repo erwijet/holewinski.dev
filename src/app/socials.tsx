@@ -6,7 +6,7 @@ export const Socials = () => {
     <Stack ml="16px">
       <HStack>
         <FaGithub />
-        <Text>Github &#8212;</Text>
+        <Text>GitHub &#8212;</Text>
         <Link href="https://github.com/erwijet">erwijet</Link>
       </HStack>
 

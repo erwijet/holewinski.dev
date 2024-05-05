@@ -58,7 +58,7 @@ export default function RootLayout({
         <meta property="og:type" content="website" />
         <meta
           property="og:type"
-          content="https://www.holewinski.dev/profile.png"
+          content="https://pub.holewinski.dev/profile.png"
         />
         <title>Tyler Holewinski</title>
       </head>
