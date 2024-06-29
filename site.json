@@ -14,22 +14,28 @@
     "Indietronica Lover"
   ],
   "jsonld": {
-    "@context": "https://schema.org/",
-    "@type": "Person",
-    "name": "Tyler Holewinski",
-    "url": "https://holewinski.dev",
-    "image": "https://holewinski.dev/profile.png",
-    "sameAs": [
-      "https://twitter.com/erwijet",
-      "https://instagram.com/erwijet",
-      "https://linkedin.com/in/tylerholewinski/",
-      "https://github.com/erwijet",
-      "https://holewinski.dev"
-    ],
-    "jobTitle": "Software Engineer",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Bryx, Inc"
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    "dateCreated": "2024-12-23T12:34:00-05:00",
+    "dateModified": "2024-06-29T14:53:00-05:00",
+    "mainEntity": {
+      "@type": "Person",
+      "name": "Tyler Holewinski",
+      "alternateName": "erwijet",
+      "url": "https://holewinski.dev",
+      "image": "https://holewinski.dev/profile.png",
+      "sameAs": [
+        "https://twitter.com/erwijet",
+        "https://instagram.com/erwijet",
+        "https://linkedin.com/in/tylerholewinski/",
+        "https://github.com/erwijet",
+        "https://holewinski.dev"
+      ],
+      "jobTitle": "Software Engineer",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Bryx, Inc"
+      }
     }
   }
 }
