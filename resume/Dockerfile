@@ -1,4 +1,4 @@
-FROM registry.gitlab.com/islandoftex/images/texlive:latest AS resume-builder
+FROM texlive/texlive:latest AS resume-builder
 WORKDIR /resume
 
 RUN apt update && apt install -y wget
