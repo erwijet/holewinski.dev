@@ -27,7 +27,7 @@ COPY .env /.env
 
 RUN <<EOF
   apt-get update
-  apt-get install -y ca-certificates
+  apt-get install -y ca-certificates openssl
   update-ca-certificates
 EOF
 
