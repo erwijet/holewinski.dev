@@ -8,6 +8,7 @@ RUN cargo new /spotify
 COPY ./Cargo.toml ./Cargo.lock /spotify/
 
 WORKDIR /spotify
+RUN apt update && apt install -y openssl libssl-dev
 RUN --mount=type=cache,target=/usr/local/cargo/registry cargo build --release
 
 COPY ./ /spotify
@@ -21,13 +22,13 @@ EOF
 
 ##
 
-FROM debian:bullseye-slim AS app
+FROM debian:bookworm-slim AS app
 COPY --from=build /spotify/target/release/spotify /spotify
 COPY .env /.env
 
 RUN <<EOF
   apt-get update
-  apt-get install -y ca-certificates openssl
+  apt-get install -y ca-certificates openssl libssl-dev
   update-ca-certificates
 EOF
 
