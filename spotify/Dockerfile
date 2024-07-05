@@ -2,7 +2,7 @@
 # ^ enable heredocs & buildkit: https://www.docker.com/blog/introduction-to-heredocs-in-dockerfiles/
 # note: this requires either DOCKER_BUILDKIT=1 be set if not building with `$ docker buildx`
 
-FROM rust:1.70 AS build
+FROM rust:1.76 AS build
 
 RUN cargo new /spotify
 COPY ./Cargo.toml ./Cargo.lock /spotify/
