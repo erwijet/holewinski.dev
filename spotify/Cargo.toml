@@ -9,6 +9,7 @@ edition = "2021"
 axum = { version = "0.6.18", features = ["ws"] }
 chrono = "0.4.26"
 dotenv = "0.15.0"
+env_logger = "0.11.3"
 futures = "0.3.28"
 rspotify = { version = "0.11.7", features = ["cli"] }
 serde = { version = "1.0.171", features = ["derive"] }

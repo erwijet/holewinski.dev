@@ -218,6 +218,7 @@ struct AppData {
 #[tokio::main]
 async fn main() {
     dotenv().expect("loading `.env`");
+    env_logger::init();
 
     // configure spotify client
 
