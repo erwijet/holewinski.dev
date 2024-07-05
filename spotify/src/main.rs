@@ -1,7 +1,7 @@
 use dispatch::spotify_ws_dispatch;
 use futures::lock::Mutex;
 use heartbeat::ws_heartbeat;
-use std::{net::SocketAddr, sync::Arc};
+use std::{error::Error, net::SocketAddr, sync::Arc};
 
 use axum::{
     extract::{
@@ -114,7 +114,9 @@ async fn callback(
     if let Err(err) = spotify.request_token(&code).await {
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({ "ok": true, "err": err.to_string() })),
+            Json(
+                json!({ "ok": true, "err": err.to_string(), "src": err.source().map(|it| it.to_string()) }),
+            ),
         );
     }
 
@@ -224,6 +226,8 @@ async fn main() {
         &*std::env::var("SPOTIFY_CLIENT_SECRET").expect("reading env var `SPOTIFY_CLIENT_SECRET`"),
     );
 
+    println!("configured with: {creds:#?}");
+
     let conf = Config {
         token_refreshing: true,
         ..Config::default()
@@ -235,6 +239,8 @@ async fn main() {
             .expect("reading env var `SPOTIFY_REDIRECT_URI`"),
         ..Default::default()
     };
+
+    println!("using redirect uri: {}", oauth.redirect_uri);
 
     let spotify = AuthCodeSpotify::with_config(creds, oauth, conf);
 
