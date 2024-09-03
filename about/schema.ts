@@ -1,4 +1,4 @@
-import { list } from "@keystone-6/core";
+import { graphql, list } from "@keystone-6/core";
 
 import {
   text,
@@ -6,6 +6,9 @@ import {
   password,
   timestamp,
   calendarDay,
+  virtual,
+  file,
+  multiselect,
 } from "@keystone-6/core/fields";
 
 import { document } from "@keystone-6/fields-document";
@@ -16,7 +19,9 @@ import { pub } from "./auth";
 export const lists = {
   User: list({
     access: pub,
-
+    ui: {
+      isHidden: true
+    },
     fields: {
       name: text({ validation: { isRequired: true } }),
       email: text({
@@ -32,6 +37,9 @@ export const lists = {
   }),
   Job: list({
     access: pub,
+    ui: {
+      isHidden: true,
+    },
     fields: {
       employer: text({ label: "Employer", validation: { isRequired: true } }),
       employerSite: text({ label: "Employer Website" }),
@@ -47,14 +55,74 @@ export const lists = {
       endDate: calendarDay({ label: "End Date" }),
     },
   }),
-
-  Minibio: list({
+  About: list({
     access: pub,
+    isSingleton: true,
     fields: {
-      value: text({ validation: { isRequired: true } }),
+      jobs: relationship({
+        ref: "Job",
+        many: true,
+
+        ui: {
+          displayMode: "cards",
+          cardFields: [
+            "employer",
+            "employerSite",
+            "title",
+            "bio",
+            "startDate",
+            "endDate",
+          ],
+          inlineEdit: {
+            fields: [
+              "employer",
+              "employerSite",
+              "title",
+              "bio",
+              "startDate",
+              "endDate",
+            ],
+          },
+          linkToItem: true,
+          inlineConnect: true,
+          inlineCreate: {
+            fields: [
+              "employer",
+              "employerSite",
+              "title",
+              "bio",
+              "startDate",
+              "endDate",
+            ],
+          },
+        },
+      }),
+      minibios: relationship({
+        ref: "MiniBio",
+        many: true,
+
+        ui: {
+          displayMode: "cards",
+          cardFields: ["name"],
+          inlineEdit: { fields: ["name"] },
+          linkToItem: true,
+          inlineConnect: true,
+          inlineCreate: { fields: ["name"] },
+        },
+      }),
     },
   }),
+  MiniBio: list({
+    access: pub,
 
+    ui: {
+      isHidden: true,
+    },
+
+    fields: {
+      name: text(),
+    },
+  }),
   Post: list({
     access: pub,
     fields: {
@@ -102,7 +170,64 @@ export const lists = {
       }),
     },
   }),
+  Folder: {
+    access: pub,
+    fields: {
+      title: text({ validation: { isRequired: true } }),
+      isRoot: virtual({
+        field: graphql.field({
+          type: graphql.Boolean,
+          async resolve(item, args, ctx, info) {
+            const res: { foldersCount: number } = await ctx.graphql.run({
+              query: `
+              query CountParentFolders($id: ID) {
+                foldersCount(where: {
+                  subfolders: {
+                    some: {
+                      id: {
+                        equals: $id
+                      }
+                    }
+                  }
+                })
+              }
+            `,
+              variables: { id: item.id },
+            });
 
+            return res.foldersCount == 0;
+          },
+        }),
+      }),
+      files: relationship({
+        ref: "File",
+        many: true,
+      }),
+      subfolders: relationship({
+        ref: "Folder",
+        many: true,
+
+        ui: {
+          displayMode: "cards",
+          cardFields: ["title"],
+          inlineEdit: { fields: ["title"] },
+          linkToItem: true,
+          inlineConnect: true,
+          inlineCreate: { fields: ["title"] },
+        },
+      }),
+    },
+  },
+  File: {
+    access: pub,
+    ui: {
+      isHidden: true,
+    },
+    fields: {
+      title: text({ validation: { isRequired: true } }),
+      file: file({ storage: "local" }),
+    },
+  },
   Tag: list({
     access: pub,
 

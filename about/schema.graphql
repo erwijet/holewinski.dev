@@ -224,39 +224,115 @@ input JobCreateInput {
   endDate: CalendarDay
 }
 
-type Minibio {
+type About {
   id: ID!
-  value: String
+  jobs(where: JobWhereInput! = {}, orderBy: [JobOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: JobWhereUniqueInput): [Job!]
+  jobsCount(where: JobWhereInput! = {}): Int
+  minibios(where: MiniBioWhereInput! = {}, orderBy: [MiniBioOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: MiniBioWhereUniqueInput): [MiniBio!]
+  minibiosCount(where: MiniBioWhereInput! = {}): Int
 }
 
-input MinibioWhereUniqueInput {
+input AboutWhereUniqueInput {
   id: ID
 }
 
-input MinibioWhereInput {
-  AND: [MinibioWhereInput!]
-  OR: [MinibioWhereInput!]
-  NOT: [MinibioWhereInput!]
+input AboutWhereInput {
+  AND: [AboutWhereInput!]
+  OR: [AboutWhereInput!]
+  NOT: [AboutWhereInput!]
   id: IDFilter
-  value: StringFilter
+  jobs: JobManyRelationFilter
+  minibios: MiniBioManyRelationFilter
 }
 
-input MinibioOrderByInput {
+input JobManyRelationFilter {
+  every: JobWhereInput
+  some: JobWhereInput
+  none: JobWhereInput
+}
+
+input MiniBioManyRelationFilter {
+  every: MiniBioWhereInput
+  some: MiniBioWhereInput
+  none: MiniBioWhereInput
+}
+
+input AboutOrderByInput {
   id: OrderDirection
-  value: OrderDirection
 }
 
-input MinibioUpdateInput {
-  value: String
+input AboutUpdateInput {
+  jobs: JobRelateToManyForUpdateInput
+  minibios: MiniBioRelateToManyForUpdateInput
 }
 
-input MinibioUpdateArgs {
-  where: MinibioWhereUniqueInput!
-  data: MinibioUpdateInput!
+input JobRelateToManyForUpdateInput {
+  disconnect: [JobWhereUniqueInput!]
+  set: [JobWhereUniqueInput!]
+  create: [JobCreateInput!]
+  connect: [JobWhereUniqueInput!]
 }
 
-input MinibioCreateInput {
-  value: String
+input MiniBioRelateToManyForUpdateInput {
+  disconnect: [MiniBioWhereUniqueInput!]
+  set: [MiniBioWhereUniqueInput!]
+  create: [MiniBioCreateInput!]
+  connect: [MiniBioWhereUniqueInput!]
+}
+
+input AboutUpdateArgs {
+  where: AboutWhereUniqueInput! = {id: 1}
+  data: AboutUpdateInput!
+}
+
+input AboutCreateInput {
+  jobs: JobRelateToManyForCreateInput
+  minibios: MiniBioRelateToManyForCreateInput
+}
+
+input JobRelateToManyForCreateInput {
+  create: [JobCreateInput!]
+  connect: [JobWhereUniqueInput!]
+}
+
+input MiniBioRelateToManyForCreateInput {
+  create: [MiniBioCreateInput!]
+  connect: [MiniBioWhereUniqueInput!]
+}
+
+type MiniBio {
+  id: ID!
+  name: String
+}
+
+input MiniBioWhereUniqueInput {
+  id: ID
+}
+
+input MiniBioWhereInput {
+  AND: [MiniBioWhereInput!]
+  OR: [MiniBioWhereInput!]
+  NOT: [MiniBioWhereInput!]
+  id: IDFilter
+  name: StringFilter
+}
+
+input MiniBioOrderByInput {
+  id: OrderDirection
+  name: OrderDirection
+}
+
+input MiniBioUpdateInput {
+  name: String
+}
+
+input MiniBioUpdateArgs {
+  where: MiniBioWhereUniqueInput!
+  data: MiniBioUpdateInput!
+}
+
+input MiniBioCreateInput {
+  name: String
 }
 
 type Post {
@@ -339,6 +415,139 @@ input TagRelateToManyForCreateInput {
   connect: [TagWhereUniqueInput!]
 }
 
+type Folder {
+  id: ID!
+  title: String
+  isRoot: Boolean
+  files(where: FileWhereInput! = {}, orderBy: [FileOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: FileWhereUniqueInput): [File!]
+  filesCount(where: FileWhereInput! = {}): Int
+  subfolders(where: FolderWhereInput! = {}, orderBy: [FolderOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: FolderWhereUniqueInput): [Folder!]
+  subfoldersCount(where: FolderWhereInput! = {}): Int
+}
+
+input FolderWhereUniqueInput {
+  id: ID
+}
+
+input FolderWhereInput {
+  AND: [FolderWhereInput!]
+  OR: [FolderWhereInput!]
+  NOT: [FolderWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  files: FileManyRelationFilter
+  subfolders: FolderManyRelationFilter
+}
+
+input FileManyRelationFilter {
+  every: FileWhereInput
+  some: FileWhereInput
+  none: FileWhereInput
+}
+
+input FolderManyRelationFilter {
+  every: FolderWhereInput
+  some: FolderWhereInput
+  none: FolderWhereInput
+}
+
+input FolderOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+}
+
+input FolderUpdateInput {
+  title: String
+  files: FileRelateToManyForUpdateInput
+  subfolders: FolderRelateToManyForUpdateInput
+}
+
+input FileRelateToManyForUpdateInput {
+  disconnect: [FileWhereUniqueInput!]
+  set: [FileWhereUniqueInput!]
+  create: [FileCreateInput!]
+  connect: [FileWhereUniqueInput!]
+}
+
+input FolderRelateToManyForUpdateInput {
+  disconnect: [FolderWhereUniqueInput!]
+  set: [FolderWhereUniqueInput!]
+  create: [FolderCreateInput!]
+  connect: [FolderWhereUniqueInput!]
+}
+
+input FolderUpdateArgs {
+  where: FolderWhereUniqueInput!
+  data: FolderUpdateInput!
+}
+
+input FolderCreateInput {
+  title: String
+  files: FileRelateToManyForCreateInput
+  subfolders: FolderRelateToManyForCreateInput
+}
+
+input FileRelateToManyForCreateInput {
+  create: [FileCreateInput!]
+  connect: [FileWhereUniqueInput!]
+}
+
+input FolderRelateToManyForCreateInput {
+  create: [FolderCreateInput!]
+  connect: [FolderWhereUniqueInput!]
+}
+
+type File {
+  id: ID!
+  title: String
+  file: FileFieldOutput
+}
+
+type FileFieldOutput {
+  filename: String!
+  filesize: Int!
+  url: String!
+}
+
+input FileWhereUniqueInput {
+  id: ID
+}
+
+input FileWhereInput {
+  AND: [FileWhereInput!]
+  OR: [FileWhereInput!]
+  NOT: [FileWhereInput!]
+  id: IDFilter
+  title: StringFilter
+}
+
+input FileOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+}
+
+input FileUpdateInput {
+  title: String
+  file: FileFieldInput
+}
+
+input FileFieldInput {
+  upload: Upload!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input FileUpdateArgs {
+  where: FileWhereUniqueInput!
+  data: FileUpdateInput!
+}
+
+input FileCreateInput {
+  title: String
+  file: FileFieldInput
+}
+
 type Tag {
   id: ID!
   name: String
@@ -397,18 +606,36 @@ type Mutation {
   updateJobs(data: [JobUpdateArgs!]!): [Job]
   deleteJob(where: JobWhereUniqueInput!): Job
   deleteJobs(where: [JobWhereUniqueInput!]!): [Job]
-  createMinibio(data: MinibioCreateInput!): Minibio
-  createMinibios(data: [MinibioCreateInput!]!): [Minibio]
-  updateMinibio(where: MinibioWhereUniqueInput!, data: MinibioUpdateInput!): Minibio
-  updateMinibios(data: [MinibioUpdateArgs!]!): [Minibio]
-  deleteMinibio(where: MinibioWhereUniqueInput!): Minibio
-  deleteMinibios(where: [MinibioWhereUniqueInput!]!): [Minibio]
+  createAbout(data: AboutCreateInput!): About
+  createAbouts(data: [AboutCreateInput!]!): [About]
+  updateAbout(where: AboutWhereUniqueInput! = {id: 1}, data: AboutUpdateInput!): About
+  updateAbouts(data: [AboutUpdateArgs!]!): [About]
+  deleteAbout(where: AboutWhereUniqueInput! = {id: 1}): About
+  deleteAbouts(where: [AboutWhereUniqueInput!]!): [About]
+  createMiniBio(data: MiniBioCreateInput!): MiniBio
+  createMiniBios(data: [MiniBioCreateInput!]!): [MiniBio]
+  updateMiniBio(where: MiniBioWhereUniqueInput!, data: MiniBioUpdateInput!): MiniBio
+  updateMiniBios(data: [MiniBioUpdateArgs!]!): [MiniBio]
+  deleteMiniBio(where: MiniBioWhereUniqueInput!): MiniBio
+  deleteMiniBios(where: [MiniBioWhereUniqueInput!]!): [MiniBio]
   createPost(data: PostCreateInput!): Post
   createPosts(data: [PostCreateInput!]!): [Post]
   updatePost(where: PostWhereUniqueInput!, data: PostUpdateInput!): Post
   updatePosts(data: [PostUpdateArgs!]!): [Post]
   deletePost(where: PostWhereUniqueInput!): Post
   deletePosts(where: [PostWhereUniqueInput!]!): [Post]
+  createFolder(data: FolderCreateInput!): Folder
+  createFolders(data: [FolderCreateInput!]!): [Folder]
+  updateFolder(where: FolderWhereUniqueInput!, data: FolderUpdateInput!): Folder
+  updateFolders(data: [FolderUpdateArgs!]!): [Folder]
+  deleteFolder(where: FolderWhereUniqueInput!): Folder
+  deleteFolders(where: [FolderWhereUniqueInput!]!): [Folder]
+  createFile(data: FileCreateInput!): File
+  createFiles(data: [FileCreateInput!]!): [File]
+  updateFile(where: FileWhereUniqueInput!, data: FileUpdateInput!): File
+  updateFiles(data: [FileUpdateArgs!]!): [File]
+  deleteFile(where: FileWhereUniqueInput!): File
+  deleteFiles(where: [FileWhereUniqueInput!]!): [File]
   createTag(data: TagCreateInput!): Tag
   createTags(data: [TagCreateInput!]!): [Tag]
   updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
@@ -444,12 +671,21 @@ type Query {
   job(where: JobWhereUniqueInput!): Job
   jobs(where: JobWhereInput! = {}, orderBy: [JobOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: JobWhereUniqueInput): [Job!]
   jobsCount(where: JobWhereInput! = {}): Int
-  minibio(where: MinibioWhereUniqueInput!): Minibio
-  minibios(where: MinibioWhereInput! = {}, orderBy: [MinibioOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: MinibioWhereUniqueInput): [Minibio!]
-  minibiosCount(where: MinibioWhereInput! = {}): Int
+  about(where: AboutWhereUniqueInput! = {id: 1}): About
+  abouts(where: AboutWhereInput! = {id: {equals: 1}}, orderBy: [AboutOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: AboutWhereUniqueInput): [About!]
+  aboutsCount(where: AboutWhereInput! = {id: {equals: 1}}): Int
+  miniBio(where: MiniBioWhereUniqueInput!): MiniBio
+  miniBios(where: MiniBioWhereInput! = {}, orderBy: [MiniBioOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: MiniBioWhereUniqueInput): [MiniBio!]
+  miniBiosCount(where: MiniBioWhereInput! = {}): Int
   post(where: PostWhereUniqueInput!): Post
   posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
   postsCount(where: PostWhereInput! = {}): Int
+  folder(where: FolderWhereUniqueInput!): Folder
+  folders(where: FolderWhereInput! = {}, orderBy: [FolderOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: FolderWhereUniqueInput): [Folder!]
+  foldersCount(where: FolderWhereInput! = {}): Int
+  file(where: FileWhereUniqueInput!): File
+  files(where: FileWhereInput! = {}, orderBy: [FileOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: FileWhereUniqueInput): [File!]
+  filesCount(where: FileWhereInput! = {}): Int
   tag(where: TagWhereUniqueInput!): Tag
   tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
   tagsCount(where: TagWhereInput! = {}): Int
