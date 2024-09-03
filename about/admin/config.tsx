@@ -10,4 +10,4 @@ function Logo() {
   );
 }
 
-export const components: AdminConfig['components'] = { Logo };
+export const components: AdminConfig["components"] = { Logo };

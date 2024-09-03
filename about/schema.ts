@@ -110,6 +110,28 @@ export const lists = {
           inlineCreate: { fields: ["name"] },
         },
       }),
+      staticLinks: relationship({
+        ref: "StaticLink",
+        many: true,
+        ui: {
+          displayMode: "cards",
+          cardFields: ["title", "href"],
+          inlineEdit: { fields: ["title", "href"] },
+          linkToItem: true,
+          inlineConnect: true,
+          inlineCreate: { fields: ["title", "href"] },
+        },
+      }),
+    },
+  }),
+  StaticLink: list({
+    access: pub,
+    ui: {
+      isHidden: true,
+    },
+    fields: {
+      title: text({ validation: { isRequired: true } }),
+      href: text({ validation: { isRequired: true } }),
     },
   }),
   MiniBio: list({

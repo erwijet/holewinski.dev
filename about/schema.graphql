@@ -230,6 +230,8 @@ type About {
   jobsCount(where: JobWhereInput! = {}): Int
   minibios(where: MiniBioWhereInput! = {}, orderBy: [MiniBioOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: MiniBioWhereUniqueInput): [MiniBio!]
   minibiosCount(where: MiniBioWhereInput! = {}): Int
+  staticLinks(where: StaticLinkWhereInput! = {}, orderBy: [StaticLinkOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StaticLinkWhereUniqueInput): [StaticLink!]
+  staticLinksCount(where: StaticLinkWhereInput! = {}): Int
 }
 
 input AboutWhereUniqueInput {
@@ -243,6 +245,7 @@ input AboutWhereInput {
   id: IDFilter
   jobs: JobManyRelationFilter
   minibios: MiniBioManyRelationFilter
+  staticLinks: StaticLinkManyRelationFilter
 }
 
 input JobManyRelationFilter {
@@ -257,6 +260,12 @@ input MiniBioManyRelationFilter {
   none: MiniBioWhereInput
 }
 
+input StaticLinkManyRelationFilter {
+  every: StaticLinkWhereInput
+  some: StaticLinkWhereInput
+  none: StaticLinkWhereInput
+}
+
 input AboutOrderByInput {
   id: OrderDirection
 }
@@ -264,6 +273,7 @@ input AboutOrderByInput {
 input AboutUpdateInput {
   jobs: JobRelateToManyForUpdateInput
   minibios: MiniBioRelateToManyForUpdateInput
+  staticLinks: StaticLinkRelateToManyForUpdateInput
 }
 
 input JobRelateToManyForUpdateInput {
@@ -280,6 +290,13 @@ input MiniBioRelateToManyForUpdateInput {
   connect: [MiniBioWhereUniqueInput!]
 }
 
+input StaticLinkRelateToManyForUpdateInput {
+  disconnect: [StaticLinkWhereUniqueInput!]
+  set: [StaticLinkWhereUniqueInput!]
+  create: [StaticLinkCreateInput!]
+  connect: [StaticLinkWhereUniqueInput!]
+}
+
 input AboutUpdateArgs {
   where: AboutWhereUniqueInput! = {id: 1}
   data: AboutUpdateInput!
@@ -288,6 +305,7 @@ input AboutUpdateArgs {
 input AboutCreateInput {
   jobs: JobRelateToManyForCreateInput
   minibios: MiniBioRelateToManyForCreateInput
+  staticLinks: StaticLinkRelateToManyForCreateInput
 }
 
 input JobRelateToManyForCreateInput {
@@ -298,6 +316,51 @@ input JobRelateToManyForCreateInput {
 input MiniBioRelateToManyForCreateInput {
   create: [MiniBioCreateInput!]
   connect: [MiniBioWhereUniqueInput!]
+}
+
+input StaticLinkRelateToManyForCreateInput {
+  create: [StaticLinkCreateInput!]
+  connect: [StaticLinkWhereUniqueInput!]
+}
+
+type StaticLink {
+  id: ID!
+  title: String
+  href: String
+}
+
+input StaticLinkWhereUniqueInput {
+  id: ID
+}
+
+input StaticLinkWhereInput {
+  AND: [StaticLinkWhereInput!]
+  OR: [StaticLinkWhereInput!]
+  NOT: [StaticLinkWhereInput!]
+  id: IDFilter
+  title: StringFilter
+  href: StringFilter
+}
+
+input StaticLinkOrderByInput {
+  id: OrderDirection
+  title: OrderDirection
+  href: OrderDirection
+}
+
+input StaticLinkUpdateInput {
+  title: String
+  href: String
+}
+
+input StaticLinkUpdateArgs {
+  where: StaticLinkWhereUniqueInput!
+  data: StaticLinkUpdateInput!
+}
+
+input StaticLinkCreateInput {
+  title: String
+  href: String
 }
 
 type MiniBio {
@@ -612,6 +675,12 @@ type Mutation {
   updateAbouts(data: [AboutUpdateArgs!]!): [About]
   deleteAbout(where: AboutWhereUniqueInput! = {id: 1}): About
   deleteAbouts(where: [AboutWhereUniqueInput!]!): [About]
+  createStaticLink(data: StaticLinkCreateInput!): StaticLink
+  createStaticLinks(data: [StaticLinkCreateInput!]!): [StaticLink]
+  updateStaticLink(where: StaticLinkWhereUniqueInput!, data: StaticLinkUpdateInput!): StaticLink
+  updateStaticLinks(data: [StaticLinkUpdateArgs!]!): [StaticLink]
+  deleteStaticLink(where: StaticLinkWhereUniqueInput!): StaticLink
+  deleteStaticLinks(where: [StaticLinkWhereUniqueInput!]!): [StaticLink]
   createMiniBio(data: MiniBioCreateInput!): MiniBio
   createMiniBios(data: [MiniBioCreateInput!]!): [MiniBio]
   updateMiniBio(where: MiniBioWhereUniqueInput!, data: MiniBioUpdateInput!): MiniBio
@@ -674,6 +743,9 @@ type Query {
   about(where: AboutWhereUniqueInput! = {id: 1}): About
   abouts(where: AboutWhereInput! = {id: {equals: 1}}, orderBy: [AboutOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: AboutWhereUniqueInput): [About!]
   aboutsCount(where: AboutWhereInput! = {id: {equals: 1}}): Int
+  staticLink(where: StaticLinkWhereUniqueInput!): StaticLink
+  staticLinks(where: StaticLinkWhereInput! = {}, orderBy: [StaticLinkOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: StaticLinkWhereUniqueInput): [StaticLink!]
+  staticLinksCount(where: StaticLinkWhereInput! = {}): Int
   miniBio(where: MiniBioWhereUniqueInput!): MiniBio
   miniBios(where: MiniBioWhereInput! = {}, orderBy: [MiniBioOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: MiniBioWhereUniqueInput): [MiniBio!]
   miniBiosCount(where: MiniBioWhereInput! = {}): Int

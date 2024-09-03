@@ -32,9 +32,17 @@ model Job {
 }
 
 model About {
-  id       Int       @id
-  jobs     Job[]     @relation("About_jobs")
-  minibios MiniBio[] @relation("About_minibios")
+  id          Int          @id
+  jobs        Job[]        @relation("About_jobs")
+  minibios    MiniBio[]    @relation("About_minibios")
+  staticLinks StaticLink[] @relation("About_staticLinks")
+}
+
+model StaticLink {
+  id                     String  @id @default(cuid())
+  title                  String  @default("")
+  href                   String  @default("")
+  from_About_staticLinks About[] @relation("About_staticLinks")
 }
 
 model MiniBio {
