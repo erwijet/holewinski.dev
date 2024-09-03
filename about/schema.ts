@@ -20,7 +20,7 @@ export const lists = {
   User: list({
     access: pub,
     ui: {
-      isHidden: true
+      isHidden: true,
     },
     fields: {
       name: text({ validation: { isRequired: true } }),
@@ -120,7 +120,7 @@ export const lists = {
     },
 
     fields: {
-      name: text(),
+      name: text({ validation: { isRequired: true } }),
     },
   }),
   Post: list({
