@@ -17,6 +17,13 @@ clean:
 	rm -f TylerHolewinski-Resume.pdf
 	rm -f resume.pdf
 
+
+watch:
+	while true; do \
+		$(MAKE) all; \
+		fswatch -1 .; \
+	done 
+
 purge: clean
 	rm -rf TylerHolewinski-Resume.pdf
 	git clean -fX
