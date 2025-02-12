@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { Providers } from "./providers";
 import { jsonld } from "@/site.json";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const metadata: Metadata = {
   description: "holewinski.dev - Tyler Holewinski's personal site",
   keywords: [
