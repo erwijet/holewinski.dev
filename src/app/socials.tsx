@@ -22,7 +22,7 @@ export const Socials = () => {
         <FaMastodon />
         <Text>Mastodon &#8212;</Text>
         <Link href="https://social.holewinski.dev/@tyler">
-          @tyler@holewinski.dev
+          @tyler@social.holewinski.dev
         </Link>
       </HStack>
 
