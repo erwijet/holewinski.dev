@@ -57,11 +57,23 @@ export default function RootLayout({
         <meta property="og:site_name" content="Tyler Holewinski" />
         <meta property="og:title" content="Tyler Holewinski" />
         <meta property="og:type" content="website" />
-        <meta
-          property="og:type"
-          content="https://pub.holewinski.dev/profile.png"
-        />
         <title>Tyler Holewinski</title>
+        <link rel="canonical" href="https://www.holewinski.dev/" />
+        <meta name="robots" content="index, follow" />
+        <meta charSet="UTF-8" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="preconnect" href="https://www.holewinski.dev" crossOrigin="anonymous" />
+        <link rel="alternate" hrefLang="en" href="https://www.holewinski.dev/" />
+        <meta property="og:description" content="Tyler Holewinski's personal homepage and blog" />
+        <meta property="og:image" content="https://www.holewinski.dev/profile.png" />
+        <meta property="og:url" content="https://www.holewinski.dev/" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:description" content="Tyler Holewinski's personal homepage and blog" />
+        <meta name="twitter:image:alt" content="Photo of Tyler Holewinski" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; img-src *; script-src 'self'; style-src 'self' 'unsafe-inline'" />
       </head>
       <body>
         <a
@@ -75,7 +87,12 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonld) }}
         />
-        <Providers>{children}</Providers>
+        <main>
+          <Providers>{children}</Providers>
+        </main>
+        <footer>
+          <p>&copy; {new Date().getFullYear()} Tyler Holewinski</p>
+        </footer>
       </body>
     </html>
   );
