@@ -52,7 +52,7 @@ export default function RootLayout({
         <meta name="twitter:creator" content="@erwijet" />
         <meta
           name="twitter:image"
-          content="https://www.holewinski.dev/profile.png"
+          content="https://www.holewinski.dev/banner.png"
         />
         <meta property="og:site_name" content="Tyler Holewinski" />
         <meta property="og:title" content="Tyler Holewinski" />
@@ -67,7 +67,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.holewinski.dev" crossOrigin="anonymous" />
         <link rel="alternate" hrefLang="en" href="https://www.holewinski.dev/" />
         <meta property="og:description" content="Tyler Holewinski's personal homepage and blog" />
-        <meta property="og:image" content="https://www.holewinski.dev/profile.png" />
+        <meta property="og:image" content="https://www.holewinski.dev/banner.png" />
         <meta property="og:url" content="https://www.holewinski.dev/" />
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:description" content="Tyler Holewinski's personal homepage and blog" />
