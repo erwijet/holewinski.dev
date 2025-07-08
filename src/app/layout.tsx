@@ -72,8 +72,6 @@ export default function RootLayout({
         <meta property="og:locale" content="en_US" />
         <meta name="twitter:description" content="Tyler Holewinski's personal homepage and blog" />
         <meta name="twitter:image:alt" content="Photo of Tyler Holewinski" />
-        <meta name="referrer" content="strict-origin-when-cross-origin" />
-        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; img-src *; script-src 'self'; style-src 'self' 'unsafe-inline'" />
       </head>
       <body>
         <a
