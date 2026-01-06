@@ -86,7 +86,9 @@ pub async fn spotify_ws_dispatch(
 
         // calculate if an update needs to be emitted
 
-        if prev_client_count != clients.len() || should_emit_client_update(&listening_data, &prev_data, &cur_time, &prev_time) {
+        if prev_client_count != clients.len()
+            || should_emit_client_update(&listening_data, &prev_data, &cur_time, &prev_time)
+        {
             let msg = match get_listening_data(&spt_authcode).await {
                 Some(data) => Message::Text(
                     serde_json::to_string(&json! {{

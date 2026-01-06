@@ -1,0 +1,3 @@
+[submodule "notes/themes/archie"]
+	path = notes/themes/archie
+	url = https://github.com/athul/archie

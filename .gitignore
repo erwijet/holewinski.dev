@@ -13,3 +13,9 @@ dist-ssr
 
 .next/
 *.tsbuildinfo
+**/*.obsidian
+**/*.trash
+**/*.DS_Store
+**/*.hugo_build.lock
+notes/public
+notes/resources
