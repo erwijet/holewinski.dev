@@ -19,3 +19,5 @@ dist-ssr
 **/*.hugo_build.lock
 notes/public
 notes/resources
+
+.astro
