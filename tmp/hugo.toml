@@ -1,4 +1,0 @@
-baseURL = 'https://notes.holewinski.dev/'
-languageCode = 'en-us'
-title = 'My Notes :)'
-theme = 'hugo-theme-m10c'

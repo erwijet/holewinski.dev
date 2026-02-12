@@ -1,0 +1,95 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import Socials from "@/components/Socials.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import Card from "@/components/Card.astro";
+import Hr from "@/components/Hr.astro";
+import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
+import { SITE } from "@/config";
+import { SOCIALS } from "@/constants";
+import { TypeAnimation } from "react-type-animation";
+import { Parallax } from "@/components/Parallax";
+import { Image } from "astro:assets";
+import { TylerParallax } from "@/components/TylerParallax";
+
+import { Player } from "@/components/Player";
+
+const projects = await getCollection("posts");
+
+const featuredPosts = projects.filter(({ data }) => data.featured);
+const recentPosts = projects.filter(({ data }) => !data.featured);
+---
+
+<Layout>
+  <Header />
+  <main id="main-content" data-layout="index">
+    <section id="hero" class="pt-8 pb-6">
+      <div class="flex flex-col items-center justify-between gap-8 sm:flex-row">
+        <div class="h-min pl-3 text-center sm:border-l-2 sm:text-left">
+          <h1 class="inline-block text-4xl font-bold sm:text-5xl">
+            Tyler Holewinski
+          </h1>
+
+          <div class="mt-2 text-center sm:text-left">
+            <TypeAnimation
+              client:load
+              sequence={SITE.bios
+                .toSorted(() => (Math.random() < 0.5 ? -1 : 1))
+                .flatMap(bio => [`Software Engineer & ${bio}`, 5000])}
+              repeat={Infinity}
+              speed={40}
+              deletionSpeed={80}
+              preRenderFirstString
+            />
+          </div>
+
+          {
+            SOCIALS.length > 0 && (
+              <div class="mt-2 flex flex-col items-center sm:flex-row">
+                <Socials />
+              </div>
+            )
+          }
+        </div>
+
+        <div>
+        <TylerParallax client:load />
+        <Player client:load />
+        </div>
+      </div>
+
+
+      {
+        !SITE.shame && featuredPosts.length > 0 && (
+          <>
+            <section id="featured" class="pt-12 pb-6">
+              <h2 class="text-2xl font-semibold tracking-wide">I Write Stuff Sometimes</h2>
+              <ul>
+                {featuredPosts.map(data => (
+                  <Card variant="h3" {...data} />
+                ))}
+              </ul>
+            </section>
+            {recentPosts.length > 0 && <Hr />}
+          </>
+        )
+      }
+
+    </section>
+    <Footer />
+  </main>
+
+  <script>
+    document.addEventListener("astro:page-load", () => {
+      const indexLayout = (
+        document.querySelector("#main-content") as HTMLElement
+      )?.dataset?.layout;
+      if (indexLayout) {
+        sessionStorage.setItem("backUrl", "/");
+      }
+    });
+  </script>
+</Layout>

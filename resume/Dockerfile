@@ -1,24 +1,23 @@
-FROM texlive/texlive:latest AS resume-builder
-WORKDIR /resume
+FROM rust:bullseye AS build
 
-RUN apt update && apt install -y wget
-RUN mkdir -p ~/.local/share/fonts
-RUN wget -O ~/.local/share/fonts/Avenir-Medium.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Medium.ttf
-RUN wget -O ~/.local/share/fonts/Avenir-Heavy.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Heavy.ttf
-RUN wget -O ~/.local/share/fonts/Avenir-Oblique.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-Oblique.ttf
-RUN wget -O ~/.local/share/fonts/Avenir-HeavyOblique.ttf https://github.com/platanus/fonts/raw/master/Avenir/Avenir-HeavyOblique.ttf
-RUN fc-cache -f -v
+WORKDIR /tmp
+RUN cargo install --locked typst-cli
+RUN mkdir -p ~/.fonts \
+    && wget https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip \
+    && unzip Inter-4.1.zip \
+    && cp Inter.ttc *.ttf ~/.fonts/ \
+    && wget https://api.fontshare.com/v2/fonts/download/general-sans \
+    && unzip general-sans \
+    && cp GeneralSans_Complete/Fonts/OTF/* ~/.fonts/ \
+    && fc-cache -f -v
 
-
-COPY ./ /resume
-RUN make
-RUN mv /resume/TylerHolewinski-Resume.pdf /resume.pdf
+COPY resume.typ ./resume.typ
+RUN typst compile resume.typ && mv resume.pdf /resume.pdf
 
 FROM busybox:1.35
-
 RUN adduser -D static
 USER static
 WORKDIR /home/static
 
-COPY --from=resume-builder /resume.pdf .
+COPY --from=build /resume.pdf .
 CMD ["busybox", "httpd", "-f", "-p", "0.0.0.0:3000"]
