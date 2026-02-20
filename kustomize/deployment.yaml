@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: holewinskidev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: holewinskidev
+  template:
+    metadata:
+      labels:
+        app: holewinskidev
+    spec:
+      containers:
+        - name: holewinskidev
+          image: ghcr.io/erwijet/holewinskidev:latest
+          ports:
+            - name: http
+              containerPort: 80
