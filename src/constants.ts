@@ -23,7 +23,7 @@ export const SOCIALS: Social[] = [
   },
   {
     name: "LinkedIn",
-    href: "https://www.linkedin.com/in/tylerholewinski/",
+    href: "https://www.linkedin.com/in/tylerholewinski",
     linkTitle: `Tyler Holewinski on LinkedIn`,
     icon: IconLinkedin,
   },
@@ -37,7 +37,7 @@ export const SOCIALS: Social[] = [
     name: "Discord",
     href: "https://discord.com/users/425426311666991114",
     linkTitle: "Discord",
-    icon: IconDiscord
+    icon: IconDiscord,
   },
   {
     name: "LastFM",

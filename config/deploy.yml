@@ -1,0 +1,21 @@
+service: holewinskidev
+image: erwijet/holewinskidev
+
+servers:
+  - web-1 # tailscale
+
+proxy:
+  ssl: false
+  hosts:
+    - www.holewinski.dev
+    - www2.holewinski.dev
+  app_port: 80
+  healthcheck: 
+    path: /
+
+registry:
+  username: erwijet
+  password: [KAMAL_REGISTRY_PASSWORD]
+
+builder:
+  arch: amd64

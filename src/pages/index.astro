@@ -17,10 +17,8 @@ import { TylerParallax } from "@/components/TylerParallax";
 
 import { Player } from "@/components/Player";
 
-const projects = await getCollection("posts");
-
-const featuredPosts = projects.filter(({ data }) => data.featured);
-const recentPosts = projects.filter(({ data }) => !data.featured);
+const writings = await getCollection("writings");
+const featured = writings.filter(({ data }) => data.featured);
 ---
 
 <Layout>
@@ -38,7 +36,7 @@ const recentPosts = projects.filter(({ data }) => !data.featured);
               client:load
               sequence={SITE.bios
                 .toSorted(() => (Math.random() < 0.5 ? -1 : 1))
-                .flatMap(bio => [`Software Engineer & ${bio}`, 5000])}
+                .flatMap((bio) => [`Software Engineer & ${bio}`, 5000])}
               repeat={Infinity}
               speed={40}
               deletionSpeed={80}
@@ -56,28 +54,25 @@ const recentPosts = projects.filter(({ data }) => !data.featured);
         </div>
 
         <div>
-        <TylerParallax client:load />
-        <Player client:load />
+          <TylerParallax client:load />
+          <Player client:load />
         </div>
       </div>
 
-
       {
-        !SITE.shame && featuredPosts.length > 0 && (
+        !SITE.shame && featured.length > 0 && (
           <>
             <section id="featured" class="pt-12 pb-6">
-              <h2 class="text-2xl font-semibold tracking-wide">I Write Stuff Sometimes</h2>
+              <h2 class="text-2xl font-semibold tracking-wide">Writing</h2>
               <ul>
-                {featuredPosts.map(data => (
+                {featured.map((data) => (
                   <Card variant="h3" {...data} />
                 ))}
               </ul>
             </section>
-            {recentPosts.length > 0 && <Hr />}
           </>
         )
       }
-
     </section>
     <Footer />
   </main>

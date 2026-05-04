@@ -19,12 +19,17 @@ html {
   --muted: #343f60;
   --border: #ab4b08; */
 
+  /* --background: #131f0f; */
+  /* --foreground: #c0d7bb; */
+  /* --accent: #bedcfe; */
+  /* --muted: #3e885b; */
+  /* --border: #85bda6; */
 
-  --background: #131f0f;
-  --foreground: #c0d7bb;
-  --accent: #bedcfe;
-  --muted: #3e885b;
-  --border: #85bda6;
+  --foreground: #cfc9c6;
+  --background: #18181b;
+  --accent: #d1bfad;
+  --muted: #ab9e95;
+  --border: #807369;
 }
 
 @theme inline {
@@ -45,7 +50,7 @@ html {
     @apply overflow-y-scroll scroll-smooth;
   }
   body {
-    @apply flex min-h-svh flex-col bg-background font-mono text-foreground selection:bg-accent/75 selection:text-background;
+    @apply flex min-h-svh flex-col bg-background font-serif text-foreground selection:bg-accent/75 selection:text-background;
   }
   a,
   button {
@@ -54,6 +59,10 @@ html {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+  header,
+  footer {
+    @apply font-mono;
   }
   section,
   footer {
@@ -79,7 +88,11 @@ html {
   --animate-fade-in: fade-in 0.5s ease-out forwards;
 
   @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
