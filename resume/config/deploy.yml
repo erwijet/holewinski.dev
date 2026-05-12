@@ -1,0 +1,22 @@
+service: resume
+image: erwijet/resume
+
+servers:
+  - web-1 # tailscale
+
+proxy:
+  ssl: false
+  hosts:
+    - resume.holewinski.dev
+  app_port: 3000
+  healthcheck:
+    interval: 3
+    timeout: 3
+    path: /
+
+registry:
+  username: erwijet
+  password: [KAMAL_REGISTRY_PASSWORD]
+
+builder:
+  arch: amd64

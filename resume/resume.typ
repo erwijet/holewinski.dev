@@ -34,31 +34,30 @@
 == WORK EXPERIENCE
 #divider()
 
-*Software Engineer II* #h(1fr) #text(gray)[May 2024 -- Present] \
+*Senior Software Engineer* #h(1fr) #text(gray)[May 2024 -- Present] \
 Bryx, Inc. #text(gray)[--- _Rochester, NY_]
 - Acted as frontend technical lead, setting architecture, standards, and review practices across multiple products.
 - Designed and implemented Kotlin and GraphQL APIs for a mission-critical emergency mass notification system used by public safety agencies.
-- Took primary ownership of the a message delivery API, designing message lifecycles and multi-channel delivery (SMS, push, email, voice).
+- Took primary ownership of the message delivery API, designing message lifecycles and multi-channel delivery (SMS, push, email, voice).
 - Delivered end-to-end features spanning database design, backend implementation, and frontend interfaces.
-- Integrated OpenTelemetry across frontend and backend services, improving observability and production reliability.
+- Integrated OpenTelemetry across frontend and backend services, granting support more direct visibility into internal failures.
 
-*Frontend Software Engineer I* #h(1fr) #text(gray)[Aug 2022 -- May 2024] \
+*Frontend Software Engineer* #h(1fr) #text(gray)[Aug 2022 -- May 2024] \
 Bryx, Inc. #text(gray)[--- _Rochester, NY_]
 - Designed and implemented an internal DSL and compiler for declarative validation of complex NFIRS and NERIS forms.
-- Built a dependency-aware validation system with batched state updates to preserve React performance.
+- Improved real-time cascading React validation in a 200+ field form from 6s to 500ms through a batched, dependency-aware validation system.
 - Served as frontend subject-matter expert for form-heavy and mapping features, influencing architectural decisions.
 
-*Intern Software Engineer* #h(1fr) #text(gray)[May 2022 -- Aug 2022] \
+*Software Engineer Intern* #h(1fr) #text(gray)[May 2022 -- Aug 2022] \
 Bryx, Inc. #text(gray)[--- _Rochester, NY_]
 - Developed core frontend functionality for a SaaS records management system focused on high configurability for fire departments.
-- Designed and implemented a custom-field-based personnel management system, demoed to leadership and prospective clients.
 
 == SELECTED WORK
 #divider()
 
 *TiCoder* — #link("https://ticoder.dev")[ticoder.dev]
-- Built a browser-based TI-BASIC editor and compiler using Blockly, enabling students to visually compose and deploy programs without proprietary tools.
-- Developed companion libraries including better-blockly for typesafe Blockly block definitions and a Rust toolchain (tibrs) for TI-BASIC binary compilation.
+- Built a browser-based TI-BASIC editor that compiles block-based programs and flashes them to physical TI-84 calculators over WebUSB, eliminating the need for proprietary TI-Connect software on student devices.
+- Authored supporting open-source libraries: tibrs, a Rust crate for compiling and decompiling TI-BASIC to the .8xp binary format, and better-blockly, a typesafe declarative API for Google Blockly.
 
 == EDUCATION
 #divider()
@@ -67,9 +66,9 @@ Rochester Institute of Technology, _School of Independent Study_ \
 *B.S. Applied Arts and Science* (completed part-time) \
 *Focus in Software Engineering and Mathematics*
 
-== SKILLS
+== TECHNOLOGIES
 #divider()
 
-- *Frontend Systems* TypeScript, React, GraphQL, Complex Form & Validation Workflows
+- TypeScript, React, GraphQL, Complex Form & Validation Workflows
 - *Backend Systems* Kotlin, Node.js, PostgreSQL, Event-Driven & Message-Oriented Architectures, API Design
 - *Observability & Tooling* OpenTelemetry, RabbitMQ, Grafana, Docker, CI/CD, Linux

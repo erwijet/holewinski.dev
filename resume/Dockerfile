@@ -14,10 +14,7 @@ RUN mkdir -p ~/.fonts \
 COPY resume.typ ./resume.typ
 RUN typst compile resume.typ && mv resume.pdf /resume.pdf
 
-FROM busybox:1.35
-RUN adduser -D static
-USER static
-WORKDIR /home/static
+FROM nginx:alpine
 
-COPY --from=build /resume.pdf .
-CMD ["busybox", "httpd", "-f", "-p", "0.0.0.0:3000"]
+COPY --from=build /resume.pdf /var/resume.pdf
+COPY nginx.conf /etc/nginx/nginx.conf
