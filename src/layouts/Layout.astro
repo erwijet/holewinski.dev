@@ -14,6 +14,7 @@ export interface Props {
   pubDatetime?: Date;
   modDatetime?: Date | null;
   scrollSmooth?: boolean;
+  tags?: string[];
 }
 
 const {
@@ -26,23 +27,72 @@ const {
   pubDatetime,
   modDatetime,
   scrollSmooth = false,
+  tags = [],
 } = Astro.props;
 
 const socialImageURL = new URL(ogImage, Astro.url);
+const isArticle = !!pubDatetime;
+const lang = SITE.lang ?? "en";
 
-const structuredData = {
+const structuredData = isArticle
+  ? {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      headline: title,
+      description: description,
+      image: `${socialImageURL}`,
+      url: `${canonicalURL}`,
+      inLanguage: lang,
+      datePublished: pubDatetime.toISOString(),
+      ...(modDatetime && { dateModified: modDatetime.toISOString() }),
+      ...(tags.length > 0 && { keywords: tags }),
+      author: [
+        {
+          "@type": "Person",
+          name: `${author}`,
+          ...(profile && { url: profile }),
+        },
+      ],
+    }
+  : {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: SITE.title,
+      url: SITE.website,
+      inLanguage: lang,
+      author: {
+        "@type": "Person",
+        name: SITE.author,
+        ...(SITE.profile && { url: SITE.profile }),
+      },
+    };
+
+const breadcrumbData = {
   "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  headline: `${title}`,
-  image: `${socialImageURL}`,
-  datePublished: `${pubDatetime?.toISOString()}`,
-  ...(modDatetime && { dateModified: modDatetime.toISOString() }),
-  author: [
+  "@type": "BreadcrumbList",
+  itemListElement: [
     {
-      "@type": "Person",
-      name: `${author}`,
-      ...(profile && { url: profile }),
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: SITE.website,
     },
+    ...(isArticle
+      ? [
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "Writing",
+            item: `${SITE.website}/writing`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: title,
+            item: `${canonicalURL}`,
+          },
+        ]
+      : []),
   ],
 };
 ---
@@ -76,10 +126,14 @@ const structuredData = {
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={isArticle ? "article" : "website"} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={socialImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${title} - ${SITE.title}`} />
 
     <!-- Article Published/Modified time -->
     {
@@ -98,6 +152,7 @@ const structuredData = {
         />
       )
     }
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -105,12 +160,18 @@ const structuredData = {
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={socialImageURL} />
+    <meta property="twitter:image:alt" content={`${title} - ${SITE.title}`} />
 
     <!-- Google JSON-LD Structured data -->
     <script
       type="application/ld+json"
       is:inline
       set:html={JSON.stringify(structuredData)}
+    />
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(breadcrumbData)}
     />
 
     <meta name="theme-color" content="" />
