@@ -4,7 +4,7 @@ pubDatetime: 2026-01-03T03:52:58.281Z
 title: Google Blockly, but make it not terrible
 slug: making-google-blockly-actually-usable-because-good-grief
 featured: true
-draft: false
+draft: true
 description: Detailing my building of a better blockly definition system
 github: https://github.com/erwijet/better-blockly
 ---
@@ -41,7 +41,7 @@ const math_bin = {
         ["*", "mul"],
         ["/", "div"],
       ]),
-      "op"
+      "op",
     );
     this.appendValueInput("rhs").setCheck("Number");
     this.setInputsInline(true);
@@ -117,10 +117,10 @@ const block = createBlockBuilder({
 block("math_bin")
   .inline()
   .outputs("Number") // <- we get typesaftey here!
-  .slot("lhs", { allow: "Number", content: v => v })
+  .slot("lhs", { allow: "Number", content: (v) => v })
   .slot("rhs", {
     allow: "Number",
-    content: v => v.dropdown("op", ["<", ">", "<=", ">="]),
+    content: (v) => v.dropdown("op", ["<", ">", "<=", ">="]),
   });
 ```
 
@@ -141,10 +141,10 @@ const block = createBlockBuilder({
 block("math_bin")
   .inline()
   .outputs("Number") // <- we get typesaftey here!
-  .slot("lhs", { allow: "Number", content: v => v })
+  .slot("lhs", { allow: "Number", content: (v) => v })
   .slot("rhs", {
     allow: "Number",
-    content: v =>
+    content: (v) =>
       v.dropdown("op", {
         add: "+",
         sub: "-",
@@ -166,4 +166,3 @@ We are able to known prior to runtime if a key in the implementation is misalign
   resolve( // autocomplete shows: "lhs" | "rhs"
 })
 ```
-

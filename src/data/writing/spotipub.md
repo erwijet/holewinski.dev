@@ -1,7 +1,7 @@
 ---
 author: Tyler Holewinski
 pubDatetime: 2025-10-05T03:52:58.281Z
-title: Recreating Discord's real-time Spotify presence for my website
+title: Recreating Discord's real-time Spotify Presence for my Website
 slug: letting-the-world-know-what-im-listening-to-all-the-time
 featured: true
 draft: false
@@ -40,7 +40,7 @@ and that's it! SSE functionality is built into native browser functionality with
 
 ```js file=client.js
 const es = new EventSource("https://myserver.com/path");
-es.addEventListener("eventname", data => {
+es.addEventListener("eventname", (data) => {
   console.log(data); // <- data is { hello: "world" }!
 });
 ```
@@ -361,7 +361,7 @@ export const Player = () => {
           <img
             className={clsx(
               "absolute top-0 left-0 aspect-square h-14 w-14 rounded-sm",
-              !isPlaying && "opacity-15"
+              !isPlaying && "opacity-15",
             )}
             src={song.image}
           />
@@ -378,7 +378,7 @@ export const Player = () => {
           </a>
 
           <div className="flex gap-2 [&>*:not(:last-child):after]:content-[',']">
-            {song.artists.map(a => (
+            {song.artists.map((a) => (
               <a
                 href={a.href}
                 className="text-xs decoration-dashed hover:underline"
@@ -428,4 +428,3 @@ And voila! I have a cute little Discord-style Spotify presence widget on my home
 ![player widget](../../assets/images/spotipub-widget.png)
 
 Now, when strangers come say hi and visit my site, they'll get that same tiny window into me that I always loved having into those around me.
-

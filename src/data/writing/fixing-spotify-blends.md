@@ -10,9 +10,9 @@ description: In which I judge and impose my will upon the engineers who build Sp
 
 A couple weeks ago, my girlfriend asked to make a Spotify blend with me. I was so excited to see that Spotify gave us a "93%" compatibility score (cute), but when I looked at the blend itself I was quite disappointed. Spotify seemed to try to split the playlist into thirds- one third was music I listened to. One third music she listened to. And the final third being music we **both** listen to. However, even then there was a catch.
 
-Often it would show a song one of us liked by an _artist_ the other liked. Now this, is cool and nifty and I see _why_ they structured it this way (that's actually a lie to appear as a kind, polite person. The truth is I think this decision is honestly pretty stupid but whatever).
+Often it would show a song one of us liked by an _artist_ the other liked. Now this, is cool and nifty and I see _why_ they structured it this way. You get to have fun moments of "whoa, I love this I didn't know <artist I enjoy> made this song" and "wait I actually really like this song I've never heard before". Stuff like that, and there's real product value to that. I 100% get it...
 
-Anyway...
+That's just like, not the product I want? Anyway...
 
 ## I Want a Playlist of **Our** Top Songs
 
@@ -96,7 +96,7 @@ function blend(userIds: string[], size = 100) {
 
 ### Other Random Scalability Thoughts
 
-I foresee this `blend` method being quite a chonker. I would probably end up gating this computation behind some sort of rate limited paired with a AMQP queue to better handle the intense workload.
+I foresee this `blend` method being quite a chonker. I would probably end up gating this computation behind some sort of rate limit paired with a AMQP queue to better handle the intense workload.
 
 ## It All Comes Crashing Down
 
@@ -104,7 +104,7 @@ I can't get raw listening data from Spotify...
 
 tf???
 
-They only publish the last 50 listened songs. This means that if I want to compute scoring myself and bypass the `/me/top/*` API routes, I have to also build a Spotify poller. Now, this is _fine_ and not really that challenging. I've done something similar [before](/writing/spotipub), but it's worth mentioning if only because I want to complain about it.
+They only publish the last 50 listened songs. This means that if I want to compute scoring myself and bypass the `/me/top/*` API routes, I have to also build a Spotify poller. Now, this is _fine_ and not really that challenging. I've done something similar [before](/writing/letting-the-world-know-what-im-listening-to-all-the-time), but it's worth mentioning if only because I want to complain about it.
 
 I haven't built this out yet, so I'm sure I'll run into a whole host of issues, but for now I think it's a fairly solid structure. I'd be lying if I said I wasn't honestly really excited to build this- it just means that once I do, anyone using this will have to wait a month for their data to populate because I'm fairly certain most people don't have a last.fm account, and I don't want to deal with building out a Spotify extended listening import tool like stats.fm has.
 
