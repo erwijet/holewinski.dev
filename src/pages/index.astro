@@ -16,9 +16,29 @@ import { Player } from "@/components/Player";
 
 const writings = await getCollection("writings");
 const featured = writings.filter(({ data }) => data.featured && !data.draft);
+
+const avatarURL = new URL(Avatar600.src, SITE.website);
+
+const profileSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfilePage",
+  mainEntity: {
+    "@type": "Person",
+    name: SITE.author,
+    url: SITE.website,
+    image: avatarURL.href,
+    description: SITE.desc,
+  },
+};
 ---
 
 <Layout>
+  <script
+    slot="head"
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify(profileSchema)}
+  />
   <Header />
   <main id="main-content" data-layout="index">
     <section id="hero" class="pt-8 pb-6">
