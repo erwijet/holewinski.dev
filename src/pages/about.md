@@ -7,7 +7,7 @@ Hello! my name is Tyler Holewinski. I'm a software engineer in Rochester, NY. I 
 
 Right now, I am working at [Bryx](https://bryx.com), a public safety company where I develop SaaS products to help first responders. I've helped build record management systems, mass notification systems, dispatch software, CAD integrations, and much more. If you're curious, you can always check out my [resume](https://resume.holewinski.dev)!
 
-I do a lot of reading and hands-on activities these days outside of work, but I've still got quite the backlog of project ideas kicking around. Sometimes I'll write about them and post them here! I really enjoy writing TypeScript and Kotlin, but recently have been enjoying Go and Rust a lot! I used to have purple hair so if you see an avatar with hair that's purple, know that there's a story behind it.
+I've been doing a lot of reading and cooking these days (anything to escape the computer outside of work), but I've still got quite the backlog of project ideas kicking around up there. Sometimes I'll write about them and post them here! I really enjoy writing TypeScript and Rust, but recently have been enjoying Go and Kotlin! I used to have purple hair so if you see an avatar with hair that's purple, know that there's a story behind it.
 
 ## Bookshelf
 
@@ -37,3 +37,4 @@ Some other random facts about me, for those who enjoy that sort of thing.
 - One day I'll have a cat. I don't yet, but I will _one day_.
 - Jasmine tea is the best tea, except for Constant Comment, which will reign forever supreme (sorry, I don't make the rules).
 - I'm convinced teaching rocks to think was a mistake.
+

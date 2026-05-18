@@ -4,21 +4,16 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Socials from "@/components/Socials.astro";
-import LinkButton from "@/components/LinkButton.astro";
 import Card from "@/components/Card.astro";
-import Hr from "@/components/Hr.astro";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
 import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 import { TypeAnimation } from "react-type-animation";
-import { Parallax } from "@/components/Parallax";
-import { Image } from "astro:assets";
 import { TylerParallax } from "@/components/TylerParallax";
 
 import { Player } from "@/components/Player";
 
 const writings = await getCollection("writings");
-const featured = writings.filter(({ data }) => data.featured);
+const featured = writings.filter(({ data }) => data.featured && !data.draft);
 ---
 
 <Layout>

@@ -7,7 +7,7 @@ export const TylerParallax = () => (
       <img
         src={Avatar.src}
         alt="Profile"
-        className="aspect-square rounded-md object-cover sm:w-[300px]"
+        className="aspect-square rounded-md object-cover sm:w-[300px] border"
       />
     </Parallax.Layer>
   </Parallax>
