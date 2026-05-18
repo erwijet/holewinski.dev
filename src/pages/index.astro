@@ -8,7 +8,9 @@ import Card from "@/components/Card.astro";
 import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 import { TypeAnimation } from "react-type-animation";
-import { TylerParallax } from "@/components/TylerParallax";
+import Avatar300 from "../assets/images/avatar-300.webp";
+import Avatar600 from "../assets/images/avatar-600.webp";
+import Avatar1200 from "../assets/images/avatar-1200.webp";
 
 import { Player } from "@/components/Player";
 
@@ -49,7 +51,22 @@ const featured = writings.filter(({ data }) => data.featured && !data.draft);
         </div>
 
         <div>
-          <TylerParallax client:load />
+          <picture>
+            <source
+              srcset={`${Avatar300.src} 300w, ${Avatar600.src} 600w, ${Avatar1200.src} 1200w`}
+              type="image/webp"
+              sizes="(min-width: 640px) 300px, 100vw"
+            />
+            <img
+              class="aspect-square rounded-md object-cover sm:w-[300px] border"
+              src={Avatar600.src}
+              width={600}
+              height={600}
+              alt="Profile"
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
           <Player client:load />
         </div>
       </div>
